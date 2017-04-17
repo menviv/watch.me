@@ -134,7 +134,7 @@ bot.dialog('/', [
 
         session.userData.SendSMS = results.response;
 
-        SendSMS('+972-'+session.userData.SendSMS);
+        SendSMS('972-'+session.userData.SendSMS);
   
         session.sendTyping();
 
