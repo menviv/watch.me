@@ -102,6 +102,8 @@ bot.dialog('/', [
 
                 session.userData.locationDetails = 'Home';
 
+                builder.Prompts.text(session, "If youy think that I should know anything else, please type in as many details as possible: "); 
+
             }
 
             
