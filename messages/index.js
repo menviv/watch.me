@@ -134,7 +134,9 @@ bot.dialog('/', [
 
         session.userData.SendSMS = results.response;
 
-        SendSMS('972-'+session.userData.SendSMS);
+        var smsNumasStr = '972-' + toString(session.userData.SendSMS);
+
+        SendSMS(smsNumasStr);
   
         session.sendTyping();
 
@@ -146,7 +148,7 @@ bot.dialog('/', [
               'locationDetails': session.userData.locationDetails,
               'StartVerifyUTCtime': session.userData.StartVerifyUTCtime,
               'StartVerifyMinutes': session.userData.StartVerifyMinutes,
-              'SendSMS': session.userData.SendSMS,
+              'SendSMS': smsNumasStr,
               'OwnerPhoneNumber': session.userData.OwnerPhoneNumber,
               'OwnerName' : session.userData.Name,
               'userid': session.message.user.id,
