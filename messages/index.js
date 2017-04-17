@@ -178,13 +178,13 @@ bot.dialog('/login', [
     },
     function (session, results) {
 
-        session.userData.OwnerPhoneNumber = results.response.entity;
+        session.userData.OwnerPhoneNumber = results.response;
 
         SignIn();
         
         function SignIn() {
 
-                        var cursor = colUserData.find({ 'PhoneNumber': session.userData.OwnerPhoneNumber });
+                        var cursor = colUserData.find({ 'userid': session.message.user.id });
                         
                         var result = [];
                         cursor.each(function(err, doc) {
@@ -231,7 +231,7 @@ bot.dialog('/login', [
     },
     function (session, results) {
 
-        session.userData.Name = results.response.entity;
+        session.userData.Name = results.response;
 
                var newRecord = {
 
@@ -239,6 +239,7 @@ bot.dialog('/login', [
                      'userName': session.userData.Name,
                      'ownerPhoneNumber': session.userData.OwnerPhoneNumber, 
                      'address': session.message.address, 
+                     'userid': session.message.user.id
                }; 
 
                colUserData.insert(newRecord, function(err, result){}); 
