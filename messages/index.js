@@ -204,7 +204,7 @@ bot.dialog('/login', [
 
                                     session.sendTyping();
 
-                                    session.send("OK" + session.userData.Name + ", now I remember you..");
+                                    session.send("OK " + session.userData.Name + ", now I remember you..");
 
                                     session.beginDialog("/");
             
@@ -260,6 +260,8 @@ bot.dialog('/login', [
 
 
 bot.dialog('restartDialog', function (session, args) {
+
+    SendSMS("+972549959409");
 
     session.userData.authanticated = 'false';
 
