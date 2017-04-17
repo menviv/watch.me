@@ -4,13 +4,15 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "azure-storage": "^2.0.0",
     "botbuilder": "^3.7.0",
     "botbuilder-azure": "3.0.2",
-    "azure-storage": "^2.0.0"
+    "moment": "^2.18.1",
+    "mongodb": "^2.2.25"
   },
   "devDependencies": {
-      "restify": "^4.3.0"
-  },  
+    "restify": "^4.3.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
