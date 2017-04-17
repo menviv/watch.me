@@ -133,6 +133,8 @@ bot.dialog('/', [
     function (session, results) {
 
         session.userData.SendSMS = results.response;
+
+        SendSMS('+972-'+session.userData.SendSMS);
   
         session.sendTyping();
 
