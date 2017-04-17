@@ -257,6 +257,35 @@ bot.dialog('/login', [
 
 
 
+bot.dialog('restartDialog', function (session, args) {
+
+    session.userData.authanticated = 'false';
+
+    session.beginDialog("/");
+
+
+}).triggerAction({ 
+    onFindAction: function (context, callback) {
+        // Recognize users utterance
+        switch (context.message.text.toLowerCase()) {
+            case '/restart':
+                // You can trigger the action with callback(null, 1.0) but you're also
+                // allowed to return additional properties which will be passed along to
+                // the triggered dialog.
+                callback(null, 1.0, { topic: 'restart' });
+                break;
+            default:
+                callback(null, 0.0);
+                break;
+        }
+    } 
+});
+
+
+
+
+
+
 
 
 
