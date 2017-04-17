@@ -261,7 +261,7 @@ bot.dialog('/login', [
 
 bot.dialog('restartDialog', function (session, args) {
 
-    SendSMS("+972549959409");
+    SendSMS("972549959409");
 
     session.userData.authanticated = 'false';
 
