@@ -4,6 +4,21 @@ To learn more please visit
 https://docs.botframework.com/en-us/node/builder/overview/
 -----------------------------------------------------------------------------*/
 
+
+///////// SMS Module ///////////////////////
+var clockwork = require("clockwork")({key:"30217d0367824cf05ad5019ef795570d518a86da"});
+
+function SendSMS(smsNum) {
+
+        clockwork.sendSms({ To: smsNum, Content: "Test!"}, function(error, resp) {
+            if (error) {
+                console.log("Something went wrong", error);
+            } else {
+                console.log("Message sent",resp.responses[0].id);
+            }
+        });
+}
+
 ///////// Time Module ///////////////////////
 var moment = require('moment');
 var DateFormat = "DD-MM-YYYY HH:mm:ss";
@@ -83,6 +98,10 @@ bot.dialog('/', [
 
                 builder.Prompts.text(session, "Ok, you must have an address, please type in as many details as possible: "); 
 
+            } else {
+
+                session.userData.locationDetails = 'Home';
+
             }
 
             
@@ -95,81 +114,46 @@ bot.dialog('/', [
 
         session.sendTyping();
 
-        if (session.userData.ReminderType == 'קבוע') {
-
-            builder.Prompts.number(session, "באיזה יום קבוע בשבוע? למשל אם יום רביעי אז נא לציין '4'"); 
-
-        } else {
-
-            builder.Prompts.number(session, "באיזה יום בחודש? למשל: ביום ה- 20 לחודש..."); 
-        }
+        builder.Prompts.choice(session, "When do you want me to start verify your level of confident in the situation? [minutes]", "5|15|30|60");
   
     },
     function (session, results) {
 
-        session.userData.ReminderDay = results.response;
+        session.userData.StartVerifyMinutes = results.response.entity;
+
+        session.userData.StartVerifyUTCtime = moment().add(7, 'm') + session.userData.StartVerifyMinutes;
         
         session.sendTyping();
 
-        builder.Prompts.number(session, "שעה מועדפת? אם מדובר בשמונה בערב אז כדאי לציין '20'"); 
+        builder.Prompts.number(session, "Who should I notify if I fear for your safety? Give me their phone number: "); 
+
     },
     function (session, results) {
 
-        session.userData.ReminderTime = results.response-3;
-        
+        session.userData.SendSMS = results.response;
+  
         session.sendTyping();
 
-        builder.Prompts.text(session, "אז מה בעצם להזכיר לך? אנא לציין כותרת קצרה וקולעת כי אני לא מוצלח בלזכור בכללי...סבבה? יופי"); 
-    },    
-    function (session, results) {
+        session.send("Great! I have what I need to watch you. Enjoy your time :-)");
 
-        session.userData.ReminderText = results.response;
-
-        var LogTimeStame = moment().format(DateFormat); 
-
-        var o_id = new mongo.ObjectID();
-
-        var now = moment();
-        var minutes = now.minutes()+1;
-        var ReminderMonth = moment().month();
-        var ReminderYear = moment().year();
-
-        var date = new Date(Date.UTC(ReminderYear, ReminderMonth, session.userData.ReminderDay, session.userData.ReminderTime, minutes, 0));
-
-        var dateTz = momentimezone.tz(date,zone).format();
-
-        var EntityRecord = {
-              '_id': o_id,
-              'CreatedTime': LogTimeStame,
-              'ReminderDay': session.userData.ReminderDay,
-              'ReminderTime': session.userData.ReminderTime,
-              'ReminderType': session.userData.ReminderType,
-              'EntityType': session.userData.userChoice,
-              'EntityToPublishDate': dateTz,
-              'ReminderText' : session.userData.ReminderText,
+        var newRecord = {
+              'CreatedTime': moment().format(DateFormat),
+              'locationType': session.userData.locationType,
+              'locationDetails': session.userData.locationDetails,
+              'StartVerifyUTCtime': session.userData.StartVerifyUTCtime,
+              'StartVerifyMinutes': session.userData.StartVerifyMinutes,
+              'SendSMS': session.userData.SendSMS,
+              'OwnerPhoneNumber': session.userData.OwnerPhoneNumber,
+              'OwnerName' : session.userData.Name,
+              'userid': session.message.user.id,
               'address': session.message.address,
-              'EntityStatus': 'pending',
-              'userId': session.userData.userId
-        }; 
+              'EntityStatus': 'pending'
+        };
 
-        colEntities.insert(EntityRecord, function(err, result){}); 
-
-        session.userData.PostEntityInsert = 'true';
-
-        session.sendTyping();
-
-        session.send("סבבה, רשמתי לעצמי להזכיר לך.");
-
-        //session.endDialog();
-
-        session.beginDialog("/");
-
-        //session.beginDialog("/createReminder");
-
-    },
-    function (session, results) {
+        colEntities.insert(newRecord, function(err, result){}); 
 
         session.endDialog();
+
         
     }
 ]);
@@ -192,13 +176,13 @@ bot.dialog('/login', [
     },
     function (session, results) {
 
-        session.userData.phoneNumber = results.response.entity;
+        session.userData.OwnerPhoneNumber = results.response.entity;
 
         SignIn();
         
         function SignIn() {
 
-                        var cursor = colUserData.find({ 'PhoneNumber': session.userData.phoneNumber });
+                        var cursor = colUserData.find({ 'PhoneNumber': session.userData.OwnerPhoneNumber });
                         
                         var result = [];
                         cursor.each(function(err, doc) {
@@ -251,7 +235,7 @@ bot.dialog('/login', [
 
                      'CreatedTime': moment().format(DateFormat),
                      'userName': session.userData.Name,
-                     'phoneNumber': session.userData.phoneNumber, 
+                     'ownerPhoneNumber': session.userData.OwnerPhoneNumber, 
                      'address': session.message.address, 
                }; 
 
