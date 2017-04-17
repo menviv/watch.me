@@ -134,7 +134,7 @@ bot.dialog('/', [
 
         session.userData.SendSMS = results.response;
 
-        var smsNumasStr = '972-' + toString(session.userData.SendSMS);
+        var smsNumasStr = '972-' + session.userData.SendSMS;
 
         SendSMS(smsNumasStr);
   
@@ -263,7 +263,7 @@ bot.dialog('/login', [
 
 bot.dialog('restartDialog', function (session, args) {
 
-    SendSMS("972549959409");
+    //SendSMS("972549959409");
 
     session.userData.authanticated = 'false';
 
