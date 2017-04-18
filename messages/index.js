@@ -8,9 +8,9 @@ https://docs.botframework.com/en-us/node/builder/overview/
 ///////// SMS Module ///////////////////////
 var clockwork = require("clockwork")({key:"30217d0367824cf05ad5019ef795570d518a86da"});
 
-function SendSMS(smsNum) {
+function SendSMS(smsNum, smsRes) {
 
-        clockwork.sendSms({ To: smsNum, Content: "Test!"}, function(error, resp) {
+        clockwork.sendSms({ To: smsNum, Content: "Hey, " + smsRes + " might need your help. Click here to get helpful information to reach out and assist them."}, function(error, resp) {
             if (error) {
                 console.log("Something went wrong", error);
             } else {
@@ -98,13 +98,13 @@ bot.dialog('/', [
 
                 session.sendTyping();
 
-                builder.Prompts.text(session, "Ok, you must have an address, please type in as many details as possible: "); 
+                builder.Prompts.text(session, "Ok, you must have an address, please tell me the exact location and type in as many details as possible: "); 
 
             } else {
 
                 session.userData.locationDetails = 'Home';
 
-                builder.Prompts.text(session, "If you think that I should know anything else, please type in as many details as possible: "); 
+                builder.Prompts.text(session, "If you think that I should know anything that can help me to keep your safety, please type in as many details as possible: "); 
 
             }
 
@@ -173,8 +173,6 @@ bot.dialog('/', [
                                     session.userData.pastConnections = 'false';
 
                                     session.sendTyping();
-
-                                    //builder.Prompts.text(session, "Who should I notify if I fear for your safety? Your friend's name is: ");  
 
                                     builder.Prompts.choice(session, "Ok, now I need to know who to notify if I'll be worried for your safety", "Create New Nonnection|Just inform the police");
 
@@ -256,7 +254,7 @@ bot.dialog('/', [
 
             session.sendTyping();
 
-            builder.Prompts.number(session, "Whatc is your connection's name: "); 
+            builder.Prompts.text(session, "What's your connection's name: "); 
         
         }
         
@@ -278,7 +276,7 @@ bot.dialog('/', [
 
             var smsNumasStr = '972' + session.userData.SendSMS;
 
-            SendSMS(smsNumasStr);
+            SendSMS(smsNumasStr, session.userData.Name);
 
         }
 
