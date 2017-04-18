@@ -244,7 +244,7 @@ bot.dialog('/', [
               'recordStatus': 'active'
         };
 
-        colConnections.insert(newRecord, function(err, result){}); 
+        colConnections.insert(newConnectionRecord, function(err, result){}); 
 
 
         session.endDialog();
