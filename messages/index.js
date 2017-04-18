@@ -123,7 +123,7 @@ bot.dialog('/', [
     },
     function (session, results) {
 
-        session.userData.pastFamiliarity = results.response;
+        session.userData.pastFamiliarity = results.response.entity;
 
         session.sendTyping();
 
@@ -141,17 +141,62 @@ bot.dialog('/', [
         
         session.sendTyping();
 
-        builder.Prompts.text(session, "Who should I notify if I fear for your safety? Your friend's name is: "); 
+        function checkForPastConnections() {
+
+                        var cursor = colConnections.find({ 'userid': session.message.user.id });
+                        
+                        var result = [];
+                        cursor.each(function(err, doc) {
+                            if(err)
+                                throw err;
+                            if (doc === null) {
+                                // doc is null when the last document has been processed
+
+
+                                if (result.length>0) {
+                                    
+                                    session.userData.pastConnections = 'true';
+
+                                    builder.Prompts.choice(session, "Would you like to notify to your past connection or create new?", "Create New|Show me the list");
+
+            
+                                } else {
+
+                                    session.userData.pastConnections = 'false';
+
+                                    session.sendTyping();
+
+                                    builder.Prompts.text(session, "Who should I notify if I fear for your safety? Your friend's name is: ");  
+
+                                }
+
+
+                                return;
+                            }
+                            // do something with each doc, like push Email into a results array
+                            result.push(doc);
+                        }); 
+
+        }
+
 
     },
     function (session, results) {
 
-        session.userData.friendName = results.response;
+        if (session.userData.pastConnections == 'true') {
+
+           // session.beginDialog("/MyConnections");
+
+        } else {
+
+            session.userData.friendName = results.response;
+
+            session.sendTyping();
+
+            builder.Prompts.number(session, "And their phone number: "); 
         
-        session.sendTyping();
-
-        builder.Prompts.number(session, "And their phone number: "); 
-
+        }
+        
     },
     function (session, results) {
 
@@ -169,7 +214,7 @@ bot.dialog('/', [
         session.send("Great! I have what I need to watch you. Enjoy your time :-)");
 
         var newRecord = {
-              'CreatedTime': moment().add(1, 's'),
+              'CreatedTime': LogTimeStame,
               'locationType': session.userData.locationType,
               'locationDetails': session.userData.locationDetails,
               'pastFamiliarity': session.userData.pastFamiliarity,
@@ -189,7 +234,7 @@ bot.dialog('/', [
 
 
         var newConnectionRecord = {
-              'CreatedTime': moment().add(1, 's'),
+              'CreatedTime': LogTimeStame,
               'userid': session.message.user.id,
               'friendPhone': smsNumasStr,
               'friendName': session.userData.friendName,
@@ -203,6 +248,96 @@ bot.dialog('/', [
         session.endDialog();
 
         
+    }
+]);
+
+
+
+
+
+
+
+bot.dialog('/MyConnections', [
+    function (session) {
+
+        session.sendTyping();
+
+        builder.Prompts.number(session, "Hi there, before I can watch your back, please tell me your phone number:"); 
+
+
+    },
+    function (session, results) {
+
+        session.userData.OwnerPhoneNumber = results.response;
+
+        SignIn();
+        
+        function SignIn() {
+
+                        var cursor = colUserData.find({ 'userid': session.message.user.id });
+                        
+                        var result = [];
+                        cursor.each(function(err, doc) {
+                            if(err)
+                                throw err;
+                            if (doc === null) {
+                                // doc is null when the last document has been processed
+
+
+                                if (result.length>0) {
+                                    
+                                    session.userData.authanticated = 'true';
+
+                                    session.userData.Name = result[0].userName;
+
+                                    session.sendTyping();
+
+                                    session.send("OK " + session.userData.Name + ", now I remember you..");
+
+                                    session.beginDialog("/");
+            
+                                } else {
+
+                                    session.userData.authanticated = 'false';
+
+                                    session.sendTyping();
+
+                                    builder.Prompts.text(session, "I guess this is the first time we meet, so nice to meet you, I am WatchMe, and you?"); 
+
+                                }
+
+
+                                return;
+                            }
+                            // do something with each doc, like push Email into a results array
+                            result.push(doc);
+                        }); 
+
+
+        }
+
+
+  
+    },
+    function (session, results) {
+
+        session.userData.Name = results.response;
+
+               var newRecord = {
+
+                     'CreatedTime': LogTimeStame,
+                     'userName': session.userData.Name,
+                     'ownerPhoneNumber': session.userData.OwnerPhoneNumber, 
+                     'address': session.message.address, 
+                     'userid': session.message.user.id
+               }; 
+
+               colUserData.insert(newRecord, function(err, result){}); 
+
+               session.userData.authanticated = 'true';
+
+               session.beginDialog("/");
+
     }
 ]);
 
@@ -281,7 +416,7 @@ bot.dialog('/login', [
 
                var newRecord = {
 
-                     'CreatedTime': moment().add(1, 's'),
+                     'CreatedTime': LogTimeStame,
                      'userName': session.userData.Name,
                      'ownerPhoneNumber': session.userData.OwnerPhoneNumber, 
                      'address': session.message.address, 
