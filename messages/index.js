@@ -124,9 +124,9 @@ bot.dialog('/', [
         session.userData.StartVerifyMinutes = results.response.entity;
 
         //d.toUTCString();
-        //var timeToadd = parseInt(session.userData.StartVerifyMinutes);
+        var timeToadd = parseInt(session.userData.StartVerifyMinutes);
 
-        session.userData.StartVerifyUTCtime = moment().add(7, 'm');
+        session.userData.StartVerifyUTCtime = moment().add(timeToadd, 'm');
 
         //session.userData.StartVerifyUTCtime = moment().format(DateFormat).add(7, 'm');
         
