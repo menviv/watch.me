@@ -157,7 +157,15 @@ bot.dialog('/', [
                                     
                                     session.userData.pastConnections = 'true';
 
-                                    builder.Prompts.choice(session, "Would you like to notify to your past connection or create new?", "Create New|Show me the list");
+                                    session.send("By the way, I found past connections that you wanted to be notified: ");
+
+                                    for (i=0; i<result.length; i++) {
+
+                                        session.send(i+1 + " " + result[i].friendName + " [" + result[i].friendPhone + "]");
+
+                                    }
+
+                                    builder.Prompts.choice(session, "Would you like to notify them or create new?", "Create New|Notify them");
 
             
                                 } else {
@@ -235,16 +243,20 @@ bot.dialog('/', [
         colEntities.insert(newRecord, function(err, result){}); 
 
 
-        var newConnectionRecord = {
-              'CreatedTime': LogTimeStame,
-              'userid': session.message.user.id,
-              'friendPhone': smsNumasStr,
-              'friendName': session.userData.friendName,
-              'address': session.message.address,
-              'recordStatus': 'active'
-        };
+        if (session.userData.pastConnections != 'true') {
+            
+                 var newConnectionRecord = {
+                    'CreatedTime': LogTimeStame,
+                    'userid': session.message.user.id,
+                    'friendPhone': smsNumasStr,
+                    'friendName': session.userData.friendName,
+                    'address': session.message.address,
+                    'recordStatus': 'active'
+                };
 
-        colConnections.insert(newConnectionRecord, function(err, result){}); 
+                colConnections.insert(newConnectionRecord, function(err, result){});            
+
+        }
 
 
         session.endDialog();
