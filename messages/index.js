@@ -123,7 +123,9 @@ bot.dialog('/', [
 
         session.userData.StartVerifyMinutes = results.response.entity;
 
-        session.userData.StartVerifyUTCtime = moment().add(7, 'm') + session.userData.StartVerifyMinutes;
+        //d.toUTCString();
+
+        session.userData.StartVerifyUTCtime = (moment().format(DateFormat).add(7, 'm') + session.userData.StartVerifyMinutes).toUTCString();
         
         session.sendTyping();
 
@@ -134,9 +136,12 @@ bot.dialog('/', [
 
         session.userData.SendSMS = results.response;
 
-        var smsNumasStr = '972-' + session.userData.SendSMS;
+        var smsNumasStr = '972' + session.userData.SendSMS;
 
         SendSMS(smsNumasStr);
+
+        var MapImgURL = "https://maps.googleapis.com/maps/api/staticmap?center=" + session.userData.locationDetails + "&zoom=13&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318&markers=color:red%7Clabel:C%7C40.718217,-73.998284&key=AIzaSyAgfT-CTGCLQT18FlbEUNTDWMZmTr1DUv4";
+
   
         session.sendTyping();
 
@@ -146,6 +151,7 @@ bot.dialog('/', [
               'CreatedTime': moment().format(DateFormat),
               'locationType': session.userData.locationType,
               'locationDetails': session.userData.locationDetails,
+              'MapImgURL': MapImgURL,
               'StartVerifyUTCtime': session.userData.StartVerifyUTCtime,
               'StartVerifyMinutes': session.userData.StartVerifyMinutes,
               'SendSMS': smsNumasStr,
