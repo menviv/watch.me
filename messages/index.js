@@ -33,6 +33,7 @@ var ObjectID = require('mongodb').ObjectID;
 var dbm;
 var colUserData;
 var colEntities;
+var colConnections;
 var colLog;
 
 // Initialize connection once
@@ -43,6 +44,7 @@ mongo.MongoClient.connect(connString, function(err, database) {
   dbm = database;
   colUserData = dbm.collection('UserData'); 
   colEntities = dbm.collection('Entities');
+  colConnections = dbm.collection('Connections');
   colLog =  dbm.collection('Log'); 
   
 });
@@ -128,6 +130,7 @@ bot.dialog('/', [
         builder.Prompts.choice(session, "When do you want me to start verify your level of confident in the situation? [minutes]", "5|15|30|60");
   
     },
+    
     function (session, results) {
 
         session.userData.StartVerifyMinutes = results.response.entity;
@@ -138,7 +141,16 @@ bot.dialog('/', [
         
         session.sendTyping();
 
-        builder.Prompts.number(session, "Who should I notify if I fear for your safety? Give me their phone number: "); 
+        builder.Prompts.text(session, "Who should I notify if I fear for your safety? Your friend's name is: "); 
+
+    },
+    function (session, results) {
+
+        session.userData.friendName = results.response;
+        
+        session.sendTyping();
+
+        builder.Prompts.number(session, "And their phone number: "); 
 
     },
     function (session, results) {
@@ -164,7 +176,8 @@ bot.dialog('/', [
               'MapImgURL': MapImgURL,
               'StartVerifyUTCtime': session.userData.StartVerifyUTCtime,
               'StartVerifyMinutes': session.userData.StartVerifyMinutes,
-              'SendSMS': smsNumasStr,
+              'friendPhone': smsNumasStr,
+              'friendName': session.userData.friendName,
               'OwnerPhoneNumber': session.userData.OwnerPhoneNumber,
               'OwnerName' : session.userData.Name,
               'userid': session.message.user.id,
@@ -173,6 +186,19 @@ bot.dialog('/', [
         };
 
         colEntities.insert(newRecord, function(err, result){}); 
+
+
+        var newConnectionRecord = {
+              'CreatedTime': moment(),
+              'userid': session.message.user.id,
+              'friendPhone': smsNumasStr,
+              'friendName': session.userData.friendName,
+              'address': session.message.address,
+              'recordStatus': 'active'
+        };
+
+        colConnections.insert(newRecord, function(err, result){}); 
+
 
         session.endDialog();
 
