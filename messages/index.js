@@ -126,7 +126,9 @@ bot.dialog('/', [
         //d.toUTCString();
         //var timeToadd = parseInt(session.userData.StartVerifyMinutes);
 
-        session.userData.StartVerifyUTCtime = moment().format(DateFormat).add(7, 'm');
+        session.userData.StartVerifyUTCtime = moment().format(DateFormat);
+
+        //session.userData.StartVerifyUTCtime = moment().format(DateFormat).add(7, 'm');
         
         session.sendTyping();
 
