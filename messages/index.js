@@ -177,7 +177,9 @@ bot.dialog('/', [
                             result.push(doc);
                         }); 
 
-        }
+        };
+
+        checkForPastConnections();
 
 
     },
