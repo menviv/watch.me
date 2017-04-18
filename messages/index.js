@@ -102,7 +102,7 @@ bot.dialog('/', [
 
                 session.userData.locationDetails = 'Home';
 
-                builder.Prompts.text(session, "If youy think that I should know anything else, please type in as many details as possible: "); 
+                builder.Prompts.text(session, "If you think that I should know anything else, please type in as many details as possible: "); 
 
             }
 
@@ -116,6 +116,15 @@ bot.dialog('/', [
 
         session.sendTyping();
 
+        builder.Prompts.choice(session, "Now let's be honest with each other... how well do you know the person that you intend to meet?", "Zero|A little|He is well known|I met him in the past");
+  
+    },
+    function (session, results) {
+
+        session.userData.pastFamiliarity = results.response;
+
+        session.sendTyping();
+
         builder.Prompts.choice(session, "When do you want me to start verify your level of confident in the situation? [minutes]", "5|15|30|60");
   
     },
@@ -123,12 +132,9 @@ bot.dialog('/', [
 
         session.userData.StartVerifyMinutes = results.response.entity;
 
-        //d.toUTCString();
         var timeToadd = parseInt(session.userData.StartVerifyMinutes);
 
         session.userData.StartVerifyUTCtime = moment().add(timeToadd, 'm');
-
-        //session.userData.StartVerifyUTCtime = moment().format(DateFormat).add(7, 'm');
         
         session.sendTyping();
 
@@ -151,9 +157,10 @@ bot.dialog('/', [
         session.send("Great! I have what I need to watch you. Enjoy your time :-)");
 
         var newRecord = {
-              'CreatedTime': moment().format(DateFormat),
+              'CreatedTime': moment(),
               'locationType': session.userData.locationType,
               'locationDetails': session.userData.locationDetails,
+              'pastFamiliarity': session.userData.pastFamiliarity,
               'MapImgURL': MapImgURL,
               'StartVerifyUTCtime': session.userData.StartVerifyUTCtime,
               'StartVerifyMinutes': session.userData.StartVerifyMinutes,
@@ -248,7 +255,7 @@ bot.dialog('/login', [
 
                var newRecord = {
 
-                     'CreatedTime': moment().format(DateFormat),
+                     'CreatedTime': moment(),
                      'userName': session.userData.Name,
                      'ownerPhoneNumber': session.userData.OwnerPhoneNumber, 
                      'address': session.message.address, 
