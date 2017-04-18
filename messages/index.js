@@ -161,7 +161,7 @@ bot.dialog('/', [
 
                                     for (i=0; i<result.length; i++) {
 
-                                        session.send(i+1 + " " + result[i].friendName + " [" + result[i].friendPhone + "]");
+                                        session.send(i+1 + ". " + result[i].friendName + " [" + result[i].friendPhone + "]");
 
                                     }
 
@@ -174,7 +174,9 @@ bot.dialog('/', [
 
                                     session.sendTyping();
 
-                                    builder.Prompts.text(session, "Who should I notify if I fear for your safety? Your friend's name is: ");  
+                                    //builder.Prompts.text(session, "Who should I notify if I fear for your safety? Your friend's name is: ");  
+
+                                    builder.Prompts.choice(session, "Ok, now I need to know who to notify if I'll be worried for your safety", "Create New Nonnection|Just inform the police");
 
                                 }
 
@@ -195,9 +197,71 @@ bot.dialog('/', [
 
         if (session.userData.pastConnections == 'true') {
 
-           // session.beginDialog("/MyConnections");
+                        var cursor = colConnections.find({ 'userid': session.message.user.id });
+                        
+                        var result = [];
+                        cursor.each(function(err, doc) {
+                            if(err)
+                                throw err;
+                            if (doc === null) {
+                                // doc is null when the last document has been processed
+
+
+                                if (result.length>0) {
+                                    
+                                    for (i=0; i<result.length; i++) {
+
+                                        var smsNumasStr = '972' + result[i].friendPhone;
+
+                                        SendSMS(smsNumasStr);
+
+                                    }
+
+            
+                                }
+
+                                return;
+                            }
+                            // do something with each doc, like push Email into a results array
+                            result.push(doc);
+                        }); 
+
+
+
+                        session.send("Great! I have what I need to watch you. Enjoy your time :-)");
+
+                        var newRecord = {
+                            'CreatedTime': LogTimeStame,
+                            'locationType': session.userData.locationType,
+                            'locationDetails': session.userData.locationDetails,
+                            'pastFamiliarity': session.userData.pastFamiliarity,
+                            'MapImgURL': MapImgURL,
+                            'StartVerifyUTCtime': session.userData.StartVerifyUTCtime,
+                            'StartVerifyMinutes': session.userData.StartVerifyMinutes,
+                            'OwnerPhoneNumber': session.userData.OwnerPhoneNumber,
+                            'OwnerName' : session.userData.Name,
+                            'userid': session.message.user.id,
+                            'address': session.message.address,
+                            'EntityStatus': 'pending'
+                        };
+
+                        colEntities.insert(newRecord, function(err, result){}); 
+
+                        var MapImgURL = "https://maps.googleapis.com/maps/api/staticmap?center=" + session.userData.locationDetails + "&zoom=13&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318&markers=color:red%7Clabel:C%7C40.718217,-73.998284&key=AIzaSyAgfT-CTGCLQT18FlbEUNTDWMZmTr1DUv4";
+
+                        session.endDialog();
+
 
         } else {
+
+            session.sendTyping();
+
+            builder.Prompts.number(session, "Whatc is your connection's name: "); 
+        
+        }
+        
+    },
+    function (session, results) {
 
             session.userData.friendName = results.response;
 
@@ -205,16 +269,18 @@ bot.dialog('/', [
 
             builder.Prompts.number(session, "And their phone number: "); 
         
-        }
-        
     },
     function (session, results) {
 
         session.userData.SendSMS = results.response;
 
-        var smsNumasStr = '972' + session.userData.SendSMS;
+        if (session.userData.pastConnections != 'true') {
 
-        SendSMS(smsNumasStr);
+            var smsNumasStr = '972' + session.userData.SendSMS;
+
+            SendSMS(smsNumasStr);
+
+        }
 
         var MapImgURL = "https://maps.googleapis.com/maps/api/staticmap?center=" + session.userData.locationDetails + "&zoom=13&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318&markers=color:red%7Clabel:C%7C40.718217,-73.998284&key=AIzaSyAgfT-CTGCLQT18FlbEUNTDWMZmTr1DUv4";
 
@@ -242,8 +308,6 @@ bot.dialog('/', [
 
         colEntities.insert(newRecord, function(err, result){}); 
 
-
-        if (session.userData.pastConnections != 'true') {
             
                  var newConnectionRecord = {
                     'CreatedTime': LogTimeStame,
@@ -255,8 +319,6 @@ bot.dialog('/', [
                 };
 
                 colConnections.insert(newConnectionRecord, function(err, result){});            
-
-        }
 
 
         session.endDialog();
