@@ -51,6 +51,110 @@ mongo.MongoClient.connect(connString, function(err, database) {
 
 
 
+
+
+
+
+// Cron Scheduler  //////////////////////////////////////////////////////////////////////
+var schedule = require('node-schedule');
+
+
+
+var rule = new schedule.RecurrenceRule();
+
+rule.minute = new schedule.Range(0, 59, 1);
+
+schedule.scheduleJob(rule, function(){
+
+            var currentUTCtime = moment().add(1, 's');
+
+            var cursor = colEntities.find({ 'EntityStatus': 'pending' });
+                        
+            var result = [];
+            cursor.each(function(err, doc) {
+                if(err)
+                    throw err;
+                        if (doc === null) {
+
+                            if (result.length>0) {
+
+                                for (i=0; i<result.length; i++) {
+
+                                    var StartVerifyUTCtime = result[i].StartVerifyUTCtime; 
+
+                                    var diff = moment(StartVerifyUTCtime).diff(currentUTCtime);
+
+                                    if (diff == 0) {
+
+                                        var LogTimeStame = moment().format(DateFormat); 
+
+                                        var EntityId = result[i]._id; 
+
+                                        var Address = result[i].address; 
+
+                                        var userid = result[i].userid; 
+
+                                        sendNotification(userid, Address, EntityId);
+
+                                    }
+
+                                }   
+                        
+                                                
+                            } 
+
+                                return;
+                            }
+
+                            result.push(doc);
+            }); 
+
+
+            function sendNotification(userid, Address, EntityId) {
+
+                var cursor = colConnections.find({ 'userid': userid });
+                            
+                var result = [];
+                cursor.each(function(err, doc) {
+                    if(err)
+                        throw err;
+                            if (doc === null) {
+
+                                if (result.length>0) {
+
+                                    for (i=0; i<result.length; i++) {
+
+                                            var friendPhone = result[i].friendPhone; 
+
+                                            var friendName = result[i].friendName; 
+
+                                            SendSMS(friendPhone, friendName);
+
+
+                                    }   
+                            
+                                                    
+                                } 
+
+                                    return;
+                                }
+
+                                result.push(doc);
+                });  
+
+            }    
+
+
+    
+});
+
+
+
+
+
+
+
+
 "use strict";
 var builder = require("botbuilder");
 var botbuilder_azure = require("botbuilder-azure");
