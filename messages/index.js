@@ -169,7 +169,7 @@ bot.dialog('/', [
         session.send("Great! I have what I need to watch you. Enjoy your time :-)");
 
         var newRecord = {
-              'CreatedTime': moment(),
+              'CreatedTime': moment().add(1, 's'),
               'locationType': session.userData.locationType,
               'locationDetails': session.userData.locationDetails,
               'pastFamiliarity': session.userData.pastFamiliarity,
@@ -189,7 +189,7 @@ bot.dialog('/', [
 
 
         var newConnectionRecord = {
-              'CreatedTime': moment(),
+              'CreatedTime': moment().add(1, 's'),
               'userid': session.message.user.id,
               'friendPhone': smsNumasStr,
               'friendName': session.userData.friendName,
@@ -281,7 +281,7 @@ bot.dialog('/login', [
 
                var newRecord = {
 
-                     'CreatedTime': moment(),
+                     'CreatedTime': moment().add(1, 's'),
                      'userName': session.userData.Name,
                      'ownerPhoneNumber': session.userData.OwnerPhoneNumber, 
                      'address': session.message.address, 
