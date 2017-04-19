@@ -318,7 +318,7 @@ bot.dialog('/', [
                                     
                                     for (i=0; i<result.length; i++) {
 
-                                        ssession.userData.friendName = result[i].friendName;
+                                        session.userData.friendName = result[i].friendName;
 
                                         session.userData.SendSMS = result[i].friendPhone;
 
