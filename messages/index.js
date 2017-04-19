@@ -300,6 +300,8 @@ bot.dialog('/', [
     },
     function (session, results) {
 
+        session.send("session.userData.pastConnections: " + session.userData.pastConnections);
+
         if (session.userData.pastConnections == 'true') {
 
                         var cursor = colConnections.find({ 'userid': session.message.user.id });
