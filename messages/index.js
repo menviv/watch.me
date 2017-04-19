@@ -85,7 +85,7 @@ schedule.scheduleJob(rule, function(){
 
                                     var diff = moment(StartVerifyUTCtime).diff(currentUTCtime);
 
-                                //    if (diff < 0) {
+                                    if (diff < 0) {
 
                                         var LogTimeStame = moment().format(DateFormat); 
 
@@ -97,7 +97,7 @@ schedule.scheduleJob(rule, function(){
 
                                         sendNotification(userid, Address, EntityId, diff);
 
-                                  //  }
+                                    }
 
                                 }   
                         
@@ -112,8 +112,6 @@ schedule.scheduleJob(rule, function(){
 
 
             function sendNotification(userid, Address, EntityId, diff) {
-
-                bot.beginDialog(Address, '/sendNotificationTest', {diff: diff});
 
                 var cursor = colConnections.find({ 'userid': userid });
                             
@@ -133,7 +131,7 @@ schedule.scheduleJob(rule, function(){
 
                                             SendSMS(friendPhone, friendName);
 
-                                            bot.beginDialog(Address, '/sendNotification', { diff: diff });
+                                            bot.beginDialog(Address, '/sendNotification', { EntityId: EntityId });
 
 
                                     }   
@@ -441,35 +439,15 @@ bot.dialog('/', [
 
 
 bot.dialog('/sendNotification', [
-    function (session) {
-
-        session.sendTyping();
-
-        session.send("diff: " + diff);
-
-
-    }
-]);
-
-
-
-bot.dialog('/sendNotificationTest', [
-   /* function (session) {
-
-        session.sendTyping();
-
-        session.send("sendNotificationTest " + diff);
-
-        session.endDialog();
-
-    }*/
 
     function (session, args) {
+
+        var o_ID = new mongo.ObjectID(args.EntityId);
         //var diff = paths[args.diff];
         //session.dialogData.commands = location.commands;
         //builder.Prompts.choice(session, location.description, location.commands);
 
-        session.send("sendNotificationTest " + args.diff);
+        session.send("sendNotification " + args.EntityId);
 
         session.endDialog();
 
