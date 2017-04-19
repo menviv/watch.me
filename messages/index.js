@@ -338,7 +338,7 @@ bot.dialog('/', [
                         session.sendTyping();
 
                         session.userData.connectionMessage =
-                            "Hi " + ssession.userData.friendName +
+                            "Hi " + session.userData.friendName +
                             " I think that " + session.userData.Name + " might need you immidiate help. " +
                             " The plan was to be at " + session.userData.locationType +
                             " that is located in " + session.userData.locationDetails +
@@ -409,7 +409,7 @@ bot.dialog('/', [
         session.sendTyping();
 
         session.userData.connectionMessage =
-            "Hi " + ssession.userData.friendName +
+            "Hi " + session.userData.friendName +
             " I think that " + session.userData.Name + " might need you immidiate help. " +
             " The plan was to be at " + session.userData.locationType +
             " that is located in " + session.userData.locationDetails +
