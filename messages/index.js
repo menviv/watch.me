@@ -85,8 +85,6 @@ schedule.scheduleJob(rule, function(){
 
                                     var diff = moment(StartVerifyUTCtime).diff(currentUTCtime);
 
-                                    session.userData.diff = diff;
-
                                 //    if (diff < 0) {
 
                                         var LogTimeStame = moment().format(DateFormat); 
@@ -115,7 +113,7 @@ schedule.scheduleJob(rule, function(){
 
             function sendNotification(userid, Address, EntityId, diff) {
 
-                bot.beginDialog(Address, '/sendNotificationTest', {});
+                bot.beginDialog(Address, '/sendNotificationTest', {'diff': diff});
 
                 var cursor = colConnections.find({ 'userid': userid });
                             
