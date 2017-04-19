@@ -187,7 +187,7 @@ bot.dialog('/', [
 
             } else {
 
-                builder.Prompts.choice(session, "So, you need me to be availble with you at", "Home|Somewhere Else");
+                builder.Prompts.choice(session, "So, you need me to be availble with you at: ", "Home|At someone's home");
 
             }
      
@@ -209,7 +209,7 @@ bot.dialog('/', [
 
             } else {
 
-                session.userData.locationDetails = 'Home';
+                session.userData.locationDetails = 'home address';
 
                 builder.Prompts.text(session, "If you think that I should know anything that can help me to keep your safety, please type in as many details as possible: "); 
 
@@ -225,7 +225,7 @@ bot.dialog('/', [
 
         session.sendTyping();
 
-        builder.Prompts.choice(session, "Now let's be honest with each other... how well do you know the person that you intend to meet?", "Zero|A little|He is well known|I met him in the past");
+        builder.Prompts.choice(session, "Now let's be honest with each other... how well do you know the person that you intend to meet?", "Never met before|Knows very little |They are well known|I met once in the past");
   
     },
     function (session, results) {
@@ -234,7 +234,7 @@ bot.dialog('/', [
 
         session.sendTyping();
 
-        builder.Prompts.choice(session, "When do you want me to start verify your level of confident in the situation? [minutes]", "5|15|30|60");
+        builder.Prompts.choice(session, "When do you want me to start verify your level of confident in the situation? ***minutes ***", "5|15|30|60");
   
     },
     
@@ -316,9 +316,9 @@ bot.dialog('/', [
                                     
                                     for (i=0; i<result.length; i++) {
 
-                                        var smsNumasStr = '972' + result[i].friendPhone;
+                                        ssession.userData.friendName = result[i].friendName;
 
-                                        SendSMS(smsNumasStr);
+                                        session.userData.SendSMS = result[i].friendPhone;
 
                                     }
 
@@ -331,9 +331,22 @@ bot.dialog('/', [
                             result.push(doc);
                         }); 
 
+                        session.sendTyping();
 
+                        session.userData.connectionMessage =
+                            "Hi " + ssession.userData.friendName +
+                            " I think that " + session.userData.Name + " might need you immidiate help. " +
+                            " The plan was to be at " + session.userData.locationType +
+                            " that is located in " + session.userData.locationDetails +
+                            " at arround " + session.userData.StartVerifyUTCtime +
+                            " to meet someone that they " + session.userData.pastFamiliarity;                        
 
-                        session.send("Great! I have what I need to watch you. Enjoy your time :-)");
+                        session.send(
+                            "Got it! you plan to be at " + session.userData.locationType +
+                            " that is located in " + session.userData.locationDetails +
+                            " at arround " + session.userData.StartVerifyUTCtime +
+                            " to meet someone that you " + session.userData.pastFamiliarity
+                        );
 
                         var newRecord = {
                             'CreatedTime': LogTimeStame,
@@ -347,6 +360,7 @@ bot.dialog('/', [
                             'OwnerName' : session.userData.Name,
                             'userid': session.message.user.id,
                             'address': session.message.address,
+                            'connectionMessage': session.userData.connectionMessage,
                             'EntityStatus': 'pending'
                         };
 
@@ -392,7 +406,20 @@ bot.dialog('/', [
   
         session.sendTyping();
 
-        session.send("Great! I have what I need to watch you. Enjoy your time :-)");
+        session.userData.connectionMessage =
+            "Hi " + ssession.userData.friendName +
+            " I think that " + session.userData.Name + " might need you immidiate help. " +
+            " The plan was to be at " + session.userData.locationType +
+            " that is located in " + session.userData.locationDetails +
+            " at arround " + session.userData.StartVerifyUTCtime +
+            " to meet someone that they " + session.userData.pastFamiliarity;                        
+
+        session.send(
+            "Got it! you plan to be at " + session.userData.locationType +
+            " that is located in " + session.userData.locationDetails +
+            " at arround " + session.userData.StartVerifyUTCtime +
+            " to meet someone that you " + session.userData.pastFamiliarity
+        );
 
         var newRecord = {
               'CreatedTime': LogTimeStame,
@@ -408,6 +435,7 @@ bot.dialog('/', [
               'OwnerName' : session.userData.Name,
               'userid': session.message.user.id,
               'address': session.message.address,
+              'connectionMessage': session.userData.connectionMessage,
               'EntityStatus': 'pending'
         };
 
