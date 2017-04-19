@@ -84,7 +84,7 @@ schedule.scheduleJob(rule, function(){
 
                                     var diff = moment(StartVerifyUTCtime).diff(currentUTCtime);
 
-                                    if (diff == 0) {
+                                //    if (diff < 0) {
 
                                         var LogTimeStame = moment().format(DateFormat); 
 
@@ -94,9 +94,9 @@ schedule.scheduleJob(rule, function(){
 
                                         var userid = result[i].userid; 
 
-                                        sendNotification(userid, Address, EntityId);
+                                        sendNotification(userid, Address, EntityId, diff);
 
-                                    }
+                                  //  }
 
                                 }   
                         
@@ -110,7 +110,7 @@ schedule.scheduleJob(rule, function(){
             }); 
 
 
-            function sendNotification(userid, Address, EntityId) {
+            function sendNotification(userid, Address, EntityId, diff) {
 
                 var cursor = colConnections.find({ 'userid': userid });
                             
@@ -129,6 +129,8 @@ schedule.scheduleJob(rule, function(){
                                             var friendName = result[i].friendName; 
 
                                             SendSMS(friendPhone, friendName);
+
+                                            bot.beginDialog(Address, '/sendNotification', { diff: diff });
 
 
                                     }   
@@ -435,86 +437,13 @@ bot.dialog('/', [
 
 
 
-bot.dialog('/MyConnections', [
+bot.dialog('/sendNotification', [
     function (session) {
 
         session.sendTyping();
 
-        builder.Prompts.number(session, "Hi there, before I can watch your back, please tell me your phone number:"); 
+        session.send("diff: " + diff);
 
-
-    },
-    function (session, results) {
-
-        session.userData.OwnerPhoneNumber = results.response;
-
-        SignIn();
-        
-        function SignIn() {
-
-                        var cursor = colUserData.find({ 'userid': session.message.user.id });
-                        
-                        var result = [];
-                        cursor.each(function(err, doc) {
-                            if(err)
-                                throw err;
-                            if (doc === null) {
-                                // doc is null when the last document has been processed
-
-
-                                if (result.length>0) {
-                                    
-                                    session.userData.authanticated = 'true';
-
-                                    session.userData.Name = result[0].userName;
-
-                                    session.sendTyping();
-
-                                    session.send("OK " + session.userData.Name + ", now I remember you..");
-
-                                    session.beginDialog("/");
-            
-                                } else {
-
-                                    session.userData.authanticated = 'false';
-
-                                    session.sendTyping();
-
-                                    builder.Prompts.text(session, "I guess this is the first time we meet, so nice to meet you, I am WatchMe, and you?"); 
-
-                                }
-
-
-                                return;
-                            }
-                            // do something with each doc, like push Email into a results array
-                            result.push(doc);
-                        }); 
-
-
-        }
-
-
-  
-    },
-    function (session, results) {
-
-        session.userData.Name = results.response;
-
-               var newRecord = {
-
-                     'CreatedTime': LogTimeStame,
-                     'userName': session.userData.Name,
-                     'ownerPhoneNumber': session.userData.OwnerPhoneNumber, 
-                     'address': session.message.address, 
-                     'userid': session.message.user.id
-               }; 
-
-               colUserData.insert(newRecord, function(err, result){}); 
-
-               session.userData.authanticated = 'true';
-
-               session.beginDialog("/");
 
     }
 ]);
