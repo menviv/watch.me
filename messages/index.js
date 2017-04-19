@@ -84,7 +84,7 @@ schedule.scheduleJob(rule, function(){
 
                                     var StartVerifyUTCtime = result[i].StartVerifyUTCtime; 
 
-                                    diff = moment(StartVerifyUTCtime).diff(currentUTCtime);
+                                 //   diff = moment(StartVerifyUTCtime).diff(currentUTCtime);
 
                                 //    if (diff < 0) {
 
