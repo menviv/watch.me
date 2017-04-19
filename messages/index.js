@@ -112,6 +112,8 @@ schedule.scheduleJob(rule, function(){
 
             function sendNotification(userid, Address, EntityId, diff) {
 
+                bot.beginDialog(Address, '/sendNotification', { diff: diff });
+
                 var cursor = colConnections.find({ 'userid': userid });
                             
                 var result = [];
