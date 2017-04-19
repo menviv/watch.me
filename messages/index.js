@@ -95,7 +95,7 @@ schedule.scheduleJob(rule, function(){
 
                                         var userid = result[i].userid; 
 
-                                        sendNotification(userid, Address, EntityId, diff);
+                                        sendNotification(userid, Address, EntityId);
 
                                     }
 
@@ -111,7 +111,7 @@ schedule.scheduleJob(rule, function(){
             }); 
 
 
-            function sendNotification(userid, Address, EntityId, diff) {
+            function sendNotification(userid, Address, EntityId) {
 
                 var cursor = colConnections.find({ 'userid': userid });
                             
@@ -131,7 +131,7 @@ schedule.scheduleJob(rule, function(){
 
                                             SendSMS(friendPhone, friendName);
 
-                                          //  bot.beginDialog(Address, '/sendNotification', { EntityId: EntityId });
+                                            bot.beginDialog(Address, '/sendNotification', { EntityId: EntityId });
 
 
                                     }   
@@ -449,9 +449,16 @@ bot.dialog('/sendNotification', [
 
         session.send("sendNotification " + args.EntityId);
 
-        session.endDialog();
+        var LogChangeTimeStamp = moment().format(DateFormat); 
 
-        //session.endConversation()
+        colEntities.update (
+            { "_id": args.EntityId },
+            { $set: { 'EntityStatus': 'PendingOwnerSafe', 'ProcessedTime':LogChangeTimeStamp } }
+        ); 
+
+        //session.endDialog();
+
+        session.endConversation()
 
 
     }
