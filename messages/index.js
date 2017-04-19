@@ -469,7 +469,7 @@ bot.dialog('/sendNotificationTest', [
         //session.dialogData.commands = location.commands;
         //builder.Prompts.choice(session, location.description, location.commands);
 
-        session.send("sendNotificationTest " + diff);
+        session.send("sendNotificationTest " + args.diff);
 
         session.endDialog();
 
