@@ -95,7 +95,7 @@ schedule.scheduleJob(rule, function(){
 
                                         var userid = result[i].userid; 
 
-                                        sendNotification(userid, Address, EntityId);
+                                        sendOwnerNotification(userid, Address, EntityId);
 
                                     }
 
@@ -111,7 +111,7 @@ schedule.scheduleJob(rule, function(){
             }); 
 
 
-            function sendNotification(userid, Address, EntityId) {
+            function sendOwnerNotification(userid, Address, EntityId) {
 
                 var cursor = colConnections.find({ 'userid': userid });
                             
@@ -131,7 +131,7 @@ schedule.scheduleJob(rule, function(){
 
                                             SendSMS(friendPhone, friendName);
 
-                                            bot.beginDialog(Address, '/sendNotification', { EntityId: EntityId });
+                                            bot.beginDialog(Address, '/sendOwnerNotification', { EntityId: EntityId });
 
 
                                     }   
@@ -466,16 +466,16 @@ bot.dialog('/', [
 
 
 
-bot.dialog('/sendNotification', [
+bot.dialog('/sendOwnerNotification', [
 
     function (session, args) {
 
         var o_ID = new mongo.ObjectID(args.EntityId);
-        //var diff = paths[args.diff];
-        //session.dialogData.commands = location.commands;
-        //builder.Prompts.choice(session, location.description, location.commands);
 
-        session.send("sendNotification " + args.EntityId);
+        var EntityId = args.EntityId;
+
+        //session.send("Hi " + args.EntityId + ", Can you please confirm that you are safe? :-)");
+        builder.Prompts.choice(session, "Hi " + args.EntityId + ", Can you please confirm that you are safe? :-)", "All good|Check again in 5 minutes|Check again in 15 minutes|Check again in 60 minutes|Help me please!");
 
         var LogChangeTimeStamp = moment().format(DateFormat); 
 
@@ -489,10 +489,164 @@ bot.dialog('/sendNotification', [
         session.endConversation()
 
 
-    }
+    },
+    function (session, results) {
 
+            session.userData.OwnerState = results.response.entity;
+
+            var OwnerState = results.response.entity;
+
+            var numberOwnerState = OwnerState.replace( /^\D+/g, '');
+
+            var LogChangeTimeStamp = moment().format(DateFormat); 
+
+
+            if (numberOwnerState == 5) {
+
+                session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
+
+                colEntities.update (
+                    { "_id": EntityId },
+                    { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
+                );   
+
+
+            } else if (numberOwnerState == 15) {
+
+                session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
+
+                colEntities.update (
+                    { "_id": EntityId },
+                    { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
+                );     
+
+
+            } else if (numberOwnerState == 60) {
+
+                session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
+
+                colEntities.update (
+                    { "_id": EntityId },
+                    { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
+                );     
+
+
+            } else if (OwnerState == 'Help me please!') {
+
+                colEntities.update (
+                    { "_id": EntityId },
+                    { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'OwnerResponseTime':LogChangeTimeStamp } }
+                ); 
+
+                session.sendTyping();
+
+                builder.Prompts.choice(session, "So answer me quick, should I notify the police or contact your connection first?", "Police|Connection");
+
+
+            } else if (OwnerState == 'All good') {
+
+
+                colEntities.update (
+                    { "_id": EntityId },
+                    { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'OwnerResponseTime':LogChangeTimeStamp } }
+                );     
+
+
+            }
+
+      
+        
+    },
+        function (session, results) {
+
+            session.userData.OwnerImmidiateDangerAction = results.response.entity;
+
+                colEntities.update (
+                    { "_id": EntityId },
+                    { $set: { 'EntityStatus': 'OwnerNeedsImmidiateHelp', 'OwnerStateAction':session.userData.OwnerImmidiateDangerAction, 'OwnerResponseTime':LogChangeTimeStamp } }
+                );
+
+            session.send("Done! help is on the way...");
+
+            session.sendTyping();
+
+            session.beginDialog("/SafetyInstructions"); 
+
+        }
 
 ]);
+
+
+
+
+
+
+bot.dialog('/SafetyInstructions', [
+    function (session) {
+
+        session.sendTyping();
+
+        session.send("Ok, now is the time to try and stay cool as possible."); 
+
+        builder.Prompts.choice(session, "Are", "Police|Connection");
+
+
+    },
+    function (session, results) {
+
+        session.userData.OwnerPhoneNumber = results.response;
+
+        SignIn();
+        
+        function SignIn() {
+
+                        var cursor = colUserData.find({ 'userid': session.message.user.id });
+                        
+                        var result = [];
+                        cursor.each(function(err, doc) {
+                            if(err)
+                                throw err;
+                            if (doc === null) {
+                                // doc is null when the last document has been processed
+
+
+                                if (result.length>0) {
+                                    
+                                    session.userData.authanticated = 'true';
+
+                                    session.userData.Name = result[0].userName;
+
+                                    session.sendTyping();
+
+                                    session.send("OK " + session.userData.Name + ", now I remember you..");
+
+                                    session.beginDialog("/");
+            
+                                } else {
+
+                                    session.userData.authanticated = 'false';
+
+                                    session.sendTyping();
+
+                                    builder.Prompts.text(session, "I guess this is the first time we meet, so nice to meet you, I am WatchMe, and you?"); 
+
+                                }
+
+
+                                return;
+                            }
+                            // do something with each doc, like push Email into a results array
+                            result.push(doc);
+                        }); 
+
+
+        }
+
+
+  
+    }
+]);
+
 
 
 
