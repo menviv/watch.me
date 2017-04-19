@@ -51,7 +51,6 @@ mongo.MongoClient.connect(connString, function(err, database) {
 
 
 
-var sdiff='100';
 
 
 
@@ -84,7 +83,9 @@ schedule.scheduleJob(rule, function(){
 
                                     var StartVerifyUTCtime = result[i].StartVerifyUTCtime; 
 
-                                    diff = moment(StartVerifyUTCtime).diff(currentUTCtime);
+                                    var diff = moment(StartVerifyUTCtime).diff(currentUTCtime);
+
+                                    session.userData.diff = diff;
 
                                 //    if (diff < 0) {
 
@@ -114,7 +115,7 @@ schedule.scheduleJob(rule, function(){
 
             function sendNotification(userid, Address, EntityId, diff) {
 
-                bot.beginDialog(Address, '/sendNotificationTest', {diff: diff});
+                bot.beginDialog(Address, '/sendNotificationTest', {});
 
                 var cursor = colConnections.find({ 'userid': userid });
                             
@@ -459,7 +460,7 @@ bot.dialog('/sendNotificationTest', [
 
         session.sendTyping();
 
-        session.send("sendNotificationTest " + sdiff);
+        session.send("sendNotificationTest " + session.userData.diff);
 
         session.endDialog();
 
