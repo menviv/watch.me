@@ -458,7 +458,7 @@ bot.dialog('/sendNotificationTest', [
 
         session.sendTyping();
 
-        session.send("sendNotificationTest " + session.userData.diff);
+        session.send("sendNotificationTest " + diff);
 
         session.endDialog();
 
