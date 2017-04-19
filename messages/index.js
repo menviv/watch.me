@@ -131,7 +131,7 @@ schedule.scheduleJob(rule, function(){
 
                                             SendSMS(friendPhone, friendName);
 
-                                            bot.beginDialog(Address, '/sendNotification', { EntityId: EntityId });
+                                          //  bot.beginDialog(Address, '/sendNotification', { EntityId: EntityId });
 
 
                                     }   
