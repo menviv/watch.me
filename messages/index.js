@@ -454,7 +454,7 @@ bot.dialog('/sendNotification', [
 
 
 bot.dialog('/sendNotificationTest', [
-    function (session) {
+   /* function (session) {
 
         session.sendTyping();
 
@@ -462,7 +462,21 @@ bot.dialog('/sendNotificationTest', [
 
         session.endDialog();
 
-    }
+    }*/
+
+    function (session, args) {
+        var diff = paths[args.diff];
+        //session.dialogData.commands = location.commands;
+        //builder.Prompts.choice(session, location.description, location.commands);
+
+        session.send("sendNotificationTest " + diff);
+
+        session.endDialog();
+
+
+    },
+
+
 ]);
 
 
