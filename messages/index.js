@@ -465,11 +465,11 @@ bot.dialog('/sendNotificationTest', [
     }*/
 
     function (session, args) {
-        var diff = paths[args.diff];
+        //var diff = paths[args.diff];
         //session.dialogData.commands = location.commands;
         //builder.Prompts.choice(session, location.description, location.commands);
 
-        session.send("sendNotificationTest " + diff);
+        session.send("sendNotificationTest " + args);
 
         session.endDialog();
 
