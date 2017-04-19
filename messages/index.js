@@ -51,7 +51,7 @@ mongo.MongoClient.connect(connString, function(err, database) {
 
 
 
-var diff;
+var diff=100;
 
 
 
