@@ -451,6 +451,8 @@ bot.dialog('/sendNotification', [
 
         session.endDialog();
 
+        //session.endConversation()
+
 
     }
 
