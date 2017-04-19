@@ -234,7 +234,7 @@ bot.dialog('/', [
 
         session.sendTyping();
 
-        builder.Prompts.choice(session, "When do you want me to start verify your level of confident in the situation? ***minutes ***", "5|15|30|60");
+        builder.Prompts.choice(session, "When do you want me to start verify your level of confident in the situation? '['minutes']' ", "5|15|30|60");
   
     },
     
@@ -331,6 +331,8 @@ bot.dialog('/', [
                             result.push(doc);
                         }); 
 
+                        var MapImgURL = "https://maps.googleapis.com/maps/api/staticmap?center=" + session.userData.locationDetails + "&zoom=13&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318&markers=color:red%7Clabel:C%7C40.718217,-73.998284&key=AIzaSyAgfT-CTGCLQT18FlbEUNTDWMZmTr1DUv4";                        
+
                         session.sendTyping();
 
                         session.userData.connectionMessage =
@@ -365,8 +367,6 @@ bot.dialog('/', [
                         };
 
                         colEntities.insert(newRecord, function(err, result){}); 
-
-                        var MapImgURL = "https://maps.googleapis.com/maps/api/staticmap?center=" + session.userData.locationDetails + "&zoom=13&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318&markers=color:red%7Clabel:C%7C40.718217,-73.998284&key=AIzaSyAgfT-CTGCLQT18FlbEUNTDWMZmTr1DUv4";
 
                         session.endDialog();
 
