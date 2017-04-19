@@ -112,7 +112,7 @@ schedule.scheduleJob(rule, function(){
 
             function sendNotification(userid, Address, EntityId, diff) {
 
-                bot.beginDialog(Address, '/sendNotification', { diff: diff });
+                bot.beginDialog(Address, '/sendNotificationTest', {});
 
                 var cursor = colConnections.find({ 'userid': userid });
                             
@@ -451,6 +451,18 @@ bot.dialog('/sendNotification', [
 ]);
 
 
+
+bot.dialog('/sendNotificationTest', [
+    function (session) {
+
+        session.sendTyping();
+
+        session.send("sendNotificationTest");
+
+        session.endDialog();
+
+    }
+]);
 
 
 
