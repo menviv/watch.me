@@ -51,7 +51,7 @@ mongo.MongoClient.connect(connString, function(err, database) {
 
 
 
-var diff=100;
+var sdiff='100';
 
 
 
@@ -459,7 +459,7 @@ bot.dialog('/sendNotificationTest', [
 
         session.sendTyping();
 
-        session.send("sendNotificationTest " + diff);
+        session.send("sendNotificationTest " + sdiff);
 
         session.endDialog();
 
