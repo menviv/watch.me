@@ -383,8 +383,6 @@ bot.dialog('/', [
     },
     function (session, results) {
 
-        session.send("session.userData.pastConnections: " + session.userData.pastConnections);
-
         if (session.userData.pastConnections == 'true') {
 
                         var cursor = colConnections.find({ 'userid': session.message.user.id });
@@ -416,7 +414,7 @@ bot.dialog('/', [
                             result.push(doc);
                         }); 
 
-                        var MapImgURL = "https://maps.googleapis.com/maps/api/staticmap?center=" + session.userData.locationDetails + "&zoom=13&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318&markers=color:red%7Clabel:C%7C40.718217,-73.998284&key=AIzaSyAgfT-CTGCLQT18FlbEUNTDWMZmTr1DUv4";                        
+                        var MapImgURL = "https://www.google.co.il/maps/place/" + session.userData.locationDetails;                       
 
                         session.sendTyping();
 
@@ -432,7 +430,7 @@ bot.dialog('/', [
                             "Got it! you plan to be at " + session.userData.locationType +
                             " that is located in " + session.userData.locationDetails +
                             " at arround " + session.userData.StartVerifyUTCtime +
-                            " to meet someone that you " + session.userData.pastFamiliarity
+                            " to meet someone that you defined as " + session.userData.pastFamiliarity
                         );
 
                         var LogTimeStamp = moment().format(DateFormat);
@@ -492,7 +490,7 @@ bot.dialog('/', [
 
         }
 
-        var MapImgURL = "https://maps.googleapis.com/maps/api/staticmap?center=" + session.userData.locationDetails + "&zoom=13&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318&markers=color:red%7Clabel:C%7C40.718217,-73.998284&key=AIzaSyAgfT-CTGCLQT18FlbEUNTDWMZmTr1DUv4";
+        var MapImgURL = "https://www.google.co.il/maps/place/" + session.userData.locationDetails;
 
   
         session.sendTyping();
@@ -509,7 +507,7 @@ bot.dialog('/', [
             "Got it! you plan to be at " + session.userData.locationType +
             " that is located in " + session.userData.locationDetails +
             " at arround " + session.userData.StartVerifyUTCtime +
-            " to meet someone that you " + session.userData.pastFamiliarity
+            " to meet someone that you defined as" + session.userData.pastFamiliarity
         );
 
         var LogTimeStamp = moment().format(DateFormat);
