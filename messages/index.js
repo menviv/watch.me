@@ -34,6 +34,7 @@ var dbm;
 var colUserData;
 var colEntities;
 var colConnections;
+var colDates;
 var colLog;
 
 // Initialize connection once
@@ -45,6 +46,7 @@ mongo.MongoClient.connect(connString, function(err, database) {
   colUserData = dbm.collection('UserData'); 
   colEntities = dbm.collection('Entities');
   colConnections = dbm.collection('Connections');
+  colDates =  dbm.collection('Dates');
   colLog =  dbm.collection('Log'); 
   
 });
@@ -209,8 +211,6 @@ bot.dialog('/', [
 
             } else {
 
-                session.userData.locationDetails = 'home address';
-
                 builder.Prompts.text(session, "If you think that I should know anything that can help me to keep your safety, please type in as many details as possible: "); 
 
             }
@@ -221,11 +221,87 @@ bot.dialog('/', [
     },
     function (session, results) {
 
-        session.userData.locationDetails = results.response;
+        if (session.userData.locationType != 'Home' ) {
+
+            session.userData.locationDetails = results.response;
+
+        } else {
+
+            session.userData.locationDetails = "Home Address";
+
+        }
 
         session.sendTyping();
 
-        builder.Prompts.choice(session, "Now let's be honest with each other... how well do you know the person that you intend to meet?", "Never met before|Knows very little |They are well known|I met once in the past");
+            builder.Prompts.text(session, "Now, this may sound a bit nosy but I might be able to you give you some helpful insights about the other person by simple search of a PHONE number, so type in their PHONE or just type 'NO': "); 
+  
+    },
+    function (session, results) {
+
+        session.userData.DatePhoneNumber = results.response;
+
+        var DatePhoneNumber = session.userData.DatePhoneNumber;
+
+        session.userData.ExtractedDatePhoneNumber = DatePhoneNumber.replace( /^\D+/g, '');
+
+        function SearchDateByPhone() {
+
+                        var cursor = colDates.find({ 'DatePhoneNumber': ssession.userData.ExtractedDatePhoneNumber });
+                        
+                        var result = [];
+                        cursor.each(function(err, doc) {
+                            if(err)
+                                throw err;
+                            if (doc === null) {
+                                // doc is null when the last document has been processed
+
+
+                                if (result.length>0) {
+                                    
+                                        session.sendTyping();
+
+                                        session.send("OK, I know this one, but couldn't allocate any bad impressions assosiated with it. Still let my watch you until you feel that you are safe.");
+
+            
+                                } else {
+
+                                        var LogTimeStamp = moment().format(DateFormat);
+
+                                        var newRecord = {
+                                            'CreatedTime': LogTimeStamp,
+                                            'DatePhoneNumber': session.userData.ExtractedDatePhoneNumber,
+                                            'OwnerName' : session.userData.Name,
+                                            'userid': session.message.user.id,
+                                            'address': session.message.address,
+                                            'RecordType': 'newDate',
+                                            'Status': 'active'
+                                        };
+
+                                        colDates.insert(newRecord, function(err, result){}); 
+
+                                        session.sendTyping();
+
+                                        session.send("I don't know if it's good or not but this number I don't know this number or none of my friends shared it with me..");
+
+
+                                }
+
+
+                                return;
+                            }
+                            // do something with each doc, like push Email into a results array
+                            result.push(doc);
+                        }); 
+
+
+        };
+
+        function SearchDateByPhone();
+  
+
+        session.sendTyping();
+
+        builder.Prompts.choice(session, "When do you want me to start verify your level of confident in the situation? '['minutes']' ", "5|15|30|60");
   
     },
     function (session, results) {
@@ -352,8 +428,10 @@ bot.dialog('/', [
                             " to meet someone that you " + session.userData.pastFamiliarity
                         );
 
+                        var LogTimeStamp = moment().format(DateFormat);
+
                         var newRecord = {
-                            'CreatedTime': LogTimeStame,
+                            'CreatedTime': LogTimeStamp,
                             'locationType': session.userData.locationType,
                             'locationDetails': session.userData.locationDetails,
                             'pastFamiliarity': session.userData.pastFamiliarity,
@@ -370,7 +448,11 @@ bot.dialog('/', [
 
                         colEntities.insert(newRecord, function(err, result){}); 
 
-                        session.endDialog();
+                        //session.endDialog();
+
+                        session.userData.SafetyInstructions = 'newEntity';
+
+                        session.beginDialog("/SafetyInstructions"); 
 
 
         } else {
@@ -423,8 +505,10 @@ bot.dialog('/', [
             " to meet someone that you " + session.userData.pastFamiliarity
         );
 
+        var LogTimeStamp = moment().format(DateFormat);
+
         var newRecord = {
-              'CreatedTime': LogTimeStame,
+              'CreatedTime': LogTimeStamp,
               'locationType': session.userData.locationType,
               'locationDetails': session.userData.locationDetails,
               'pastFamiliarity': session.userData.pastFamiliarity,
@@ -445,7 +529,7 @@ bot.dialog('/', [
 
             
                  var newConnectionRecord = {
-                    'CreatedTime': LogTimeStame,
+                    'CreatedTime': LogTimeStamp,
                     'userid': session.message.user.id,
                     'friendPhone': smsNumasStr,
                     'friendName': session.userData.friendName,
@@ -503,6 +587,55 @@ bot.dialog('/sendOwnerNotification', [
             var LogChangeTimeStamp = moment().format(DateFormat); 
 
 
+            function SaveDateAnalytics(numberOwnerState) {
+
+                 if (session.userData.ExtractedDatePhoneNumber != '') {
+
+                    var LogTimeStamp = moment().format(DateFormat);
+
+                    var newRecord = {
+                        'CreatedTime': LogTimeStamp,
+                        'DatePhoneNumber': session.userData.ExtractedDatePhoneNumber,
+                        'OwnerName' : session.userData.Name,
+                        'userid': session.message.user.id,
+                        'address': session.message.address,
+                        'NextVerifyAftere': numberOwnerState,
+                        'RecordType': 'AskedToBeVerified',
+                        'Status': 'active'
+                    };
+
+                    colDates.insert(newRecord, function(err, result){});    
+
+                } 
+            };
+
+
+            function DateStatusReported(OwnerState) {
+
+                 if (session.userData.ExtractedDatePhoneNumber != '') {
+
+                    var LogTimeStamp = moment().format(DateFormat);
+
+                    var newRecord = {
+                        'CreatedTime': LogTimeStamp,
+                        'DatePhoneNumber': session.userData.ExtractedDatePhoneNumber,
+                        'OwnerName' : session.userData.Name,
+                        'userid': session.message.user.id,
+                        'address': session.message.address,
+                        'OwnerState': OwnerState,
+                        'RecordType': 'AskedToBeVerified',
+                        'Status': 'active'
+                    };
+
+                    colDates.insert(newRecord, function(err, result){});    
+
+                } 
+            };
+
+
+
+
+
             if (numberOwnerState == 5) {
 
                 session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
@@ -510,7 +643,9 @@ bot.dialog('/sendOwnerNotification', [
                 colEntities.update (
                     { "_id": EntityId },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
-                );   
+                ); 
+
+                SaveDateAnalytics(numberOwnerState);
 
 
             } else if (numberOwnerState == 15) {
@@ -520,7 +655,9 @@ bot.dialog('/sendOwnerNotification', [
                 colEntities.update (
                     { "_id": EntityId },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
-                );     
+                );  
+
+                SaveDateAnalytics(numberOwnerState);   
 
 
             } else if (numberOwnerState == 60) {
@@ -530,7 +667,9 @@ bot.dialog('/sendOwnerNotification', [
                 colEntities.update (
                     { "_id": EntityId },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
-                );     
+                ); 
+
+                SaveDateAnalytics(numberOwnerState);    
 
 
             } else if (OwnerState == 'Help me please!') {
@@ -539,6 +678,8 @@ bot.dialog('/sendOwnerNotification', [
                     { "_id": EntityId },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'OwnerResponseTime':LogChangeTimeStamp } }
                 ); 
+
+                DateStatusReported(OwnerState);
 
                 session.sendTyping();
 
@@ -551,10 +692,14 @@ bot.dialog('/sendOwnerNotification', [
                 colEntities.update (
                     { "_id": EntityId },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'OwnerResponseTime':LogChangeTimeStamp } }
-                );     
+                );  
+
+                DateStatusReported(OwnerState);   
 
 
             }
+
+
 
       
         
@@ -588,63 +733,25 @@ bot.dialog('/SafetyInstructions', [
 
         session.sendTyping();
 
-        session.send("Ok, now is the time to try and stay cool as possible."); 
+        if (session.userData.SafetyInstructions == 'newEntity') {
 
-        builder.Prompts.choice(session, "Are", "Police|Connection");
+            builder.Prompts.choice(session, "This might be unnessacery, but would you like me to share some helpfull tip about self diffense?", "Yes|NO");
+
+        } else { 
+
+            builder.Prompts.choice(session, "Ok, now is the time to try and stay cool as possible. Would you like me to share some helpfull tip about self diffense?", "Yes|NO");
+
+         };
+
+        
 
 
     },
     function (session, results) {
 
-        session.userData.OwnerPhoneNumber = results.response;
+        session.userData.OwnerPhoneNumber = results.response.entity;
 
-        SignIn();
-        
-        function SignIn() {
-
-                        var cursor = colUserData.find({ 'userid': session.message.user.id });
-                        
-                        var result = [];
-                        cursor.each(function(err, doc) {
-                            if(err)
-                                throw err;
-                            if (doc === null) {
-                                // doc is null when the last document has been processed
-
-
-                                if (result.length>0) {
-                                    
-                                    session.userData.authanticated = 'true';
-
-                                    session.userData.Name = result[0].userName;
-
-                                    session.sendTyping();
-
-                                    session.send("OK " + session.userData.Name + ", now I remember you..");
-
-                                    session.beginDialog("/");
-            
-                                } else {
-
-                                    session.userData.authanticated = 'false';
-
-                                    session.sendTyping();
-
-                                    builder.Prompts.text(session, "I guess this is the first time we meet, so nice to meet you, I am WatchMe, and you?"); 
-
-                                }
-
-
-                                return;
-                            }
-                            // do something with each doc, like push Email into a results array
-                            result.push(doc);
-                        }); 
-
-
-        }
-
-
+        session.send("Next version... promise :-)"); 
   
     }
 ]);
