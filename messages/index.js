@@ -248,11 +248,11 @@ bot.dialog('/', [
 
         session.userData.ExtractedDatePhoneNumber = DatePhoneNumber.replace( /^\D+/g, '');
 
-        session.send("ExtractedDatePhoneNumber: " + session.userData.ExtractedDatePhoneNumber);
+        var ExtractedDatePhoneNumber = session.userData.ExtractedDatePhoneNumber;
 
-        function SearchDateByPhone() {
+        function SearchDateByPhone(ExtractedDatePhoneNumber) {
 
-                        var cursor = colDates.find({ 'DatePhoneNumber': ssession.userData.ExtractedDatePhoneNumber });
+                        var cursor = colDates.find({ 'DatePhoneNumber': ExtractedDatePhoneNumber });
                         
                         var result = [];
                         cursor.each(function(err, doc) {
@@ -277,7 +277,7 @@ bot.dialog('/', [
 
                                         var newRecord = {
                                             'CreatedTime': LogTimeStamp,
-                                            'DatePhoneNumber': session.userData.ExtractedDatePhoneNumber,
+                                            'DatePhoneNumber': ExtractedDatePhoneNumber,
                                             'OwnerName' : session.userData.Name,
                                             'userid': session.message.user.id,
                                             'address': session.message.address,
@@ -307,7 +307,7 @@ bot.dialog('/', [
 
         };
 
-        SearchDateByPhone();
+        SearchDateByPhone(ExtractedDatePhoneNumber);
   
   
     },
