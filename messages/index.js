@@ -643,7 +643,7 @@ bot.dialog('/sendOwnerNotification', [
                 session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
 
                 colEntities.update (
-                    { "_id": EntityId },
+                    { "_id": args.EntityId },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
                 ); 
 
