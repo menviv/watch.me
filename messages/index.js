@@ -606,7 +606,11 @@ bot.dialog('/sendOwnerNotification', [
                         'Status': 'active'
                     };
 
-                    colDates.insert(newRecord, function(err, result){});    
+                    colDates.insert(newRecord, function(err, result){});  
+
+                    session.userData.SafetyInstructions = 'markedSnoozed';
+
+                    session.beginDialog("/SafetyInstructions");   
 
                 } 
             };
@@ -696,7 +700,13 @@ bot.dialog('/sendOwnerNotification', [
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'OwnerResponseTime':LogChangeTimeStamp } }
                 );  
 
-                DateStatusReported(OwnerState);   
+                DateStatusReported(OwnerState);  
+
+                session.send("Good to know! Enjoy and keep safe :-)"); 
+
+                session.userData.SafetyInstructions = 'markedSafe';
+
+                session.beginDialog("/SafetyInstructions"); 
 
 
             }
@@ -726,7 +736,7 @@ bot.dialog('/sendOwnerNotification', [
 ]);
 
 
-
+markedSnoozed
 
 
 
@@ -735,11 +745,15 @@ bot.dialog('/SafetyInstructions', [
 
         session.sendTyping();
 
-        if (session.userData.SafetyInstructions == 'newEntity') {
+        if (session.userData.SafetyInstructions == 'newEntity' || session.userData.SafetyInstructions == 'markedSafe') {
 
             builder.Prompts.choice(session, "This might be unnessacery, but would you like me to share some helpfull tip about self diffense?", "Yes|NO");
 
-        } else { 
+        } else if (session.userData.SafetyInstructions == 'markedSnoozed') { 
+
+            session.send("Got it, I'm here waiting for additional " + session.userData.ExtractedDatePhoneNumber + " minutes."); 
+
+         } else { 
 
             builder.Prompts.choice(session, "Ok, now is the time to try and stay cool as possible. Would you like me to share some helpfull tip about self diffense?", "Yes|NO");
 
