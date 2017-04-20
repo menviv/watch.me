@@ -97,7 +97,11 @@ schedule.scheduleJob(rule, function(){
 
                                         var userid = result[i].userid; 
 
-                                        sendOwnerNotification(userid, Address, EntityId);
+                                        var OwnerName = result[i].OwnerName; 
+
+                                        bot.beginDialog(Address, '/sendOwnerNotification', { EntityId: EntityId, userid: userid, OwnerName: OwnerName });
+
+                                        //sendOwnerNotification(userid, Address, EntityId);
 
                                     }
 
@@ -561,7 +565,7 @@ bot.dialog('/sendOwnerNotification', [
         var EntityId = args.EntityId;
 
         //session.send("Hi " + args.EntityId + ", Can you please confirm that you are safe? :-)");
-        builder.Prompts.choice(session, "Hi " + args.EntityId + ", Can you please confirm that you are safe? :-)", "All good|Check again in 5 minutes|Check again in 15 minutes|Check again in 60 minutes|Help me please!");
+        builder.Prompts.choice(session, "Hi " + args.OwnerName + ", Can you please confirm that you are safe? :-)", "All good|Check again in 5 minutes|Check again in 15 minutes|Check again in 60 minutes|Help me please!");
 
         var LogChangeTimeStamp = moment().format(DateFormat); 
 
