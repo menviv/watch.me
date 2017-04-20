@@ -574,7 +574,7 @@ bot.dialog('/sendOwnerNotification', [
             { $set: { 'EntityStatus': 'PendingOwnerSafe', 'ProcessedTime':LogChangeTimeStamp } }
         ); 
 
-        session.endConversation()
+        //session.endConversation()
 
 
     },
