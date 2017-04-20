@@ -608,8 +608,6 @@ bot.dialog('/sendOwnerNotification', [
 
                     colDates.insert(newRecord, function(err, result){});  
 
-                    session.userData.SafetyInstructions = 'markedSnoozed';
-
                     session.beginDialog("/SafetyInstructions");   
 
                 } 
@@ -653,6 +651,8 @@ bot.dialog('/sendOwnerNotification', [
 
                 SaveDateAnalytics(numberOwnerState);
 
+                session.userData.SafetyInstructions = 'markedSnoozed';
+
 
             } else if (numberOwnerState == 15) {
 
@@ -665,6 +665,8 @@ bot.dialog('/sendOwnerNotification', [
 
                 SaveDateAnalytics(numberOwnerState);   
 
+                session.userData.SafetyInstructions = 'markedSnoozed';
+
 
             } else if (numberOwnerState == 60) {
 
@@ -676,6 +678,8 @@ bot.dialog('/sendOwnerNotification', [
                 ); 
 
                 SaveDateAnalytics(numberOwnerState);    
+
+                session.userData.SafetyInstructions = 'markedSnoozed';
 
 
             } else if (OwnerState == 'Help me please!') {
