@@ -266,6 +266,8 @@ bot.dialog('/', [
 
                                         session.send("OK, I know this one, but couldn't allocate any bad impressions assosiated with it. Still let my watch you until you feel that you are safe.");
 
+                                        builder.Prompts.choice(session, "When do you want me to start verify your level of confident in the situation? '['minutes']' ", "5|15|30|60");
+
             
                                 } else {
 
@@ -287,6 +289,9 @@ bot.dialog('/', [
 
                                         session.send("I don't know if it's good or not but this number I don't know this number or none of my friends shared it with me..");
 
+                                        builder.Prompts.choice(session, "When do you want me to start verify your level of confident in the situation? '['minutes']' ", "5|15|30|60");
+
+
 
                                 }
 
@@ -302,10 +307,6 @@ bot.dialog('/', [
 
         SearchDateByPhone();
   
-
-        session.sendTyping();
-
-        builder.Prompts.choice(session, "When do you want me to start verify your level of confident in the situation? '['minutes']' ", "5|15|30|60");
   
     },
     function (session, results) {
