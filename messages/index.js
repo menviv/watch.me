@@ -665,13 +665,13 @@ bot.dialog('/sendOwnerNotification', [
 
             if (numberOwnerState == 5) {
 
-                session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
+/*                session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
 
                 colEntities.update (
                     { "_id": session.userData.EntityId },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
                 ); 
-
+*/
                 SaveDateAnalytics(numberOwnerState);
 
                 session.userData.SafetyInstructions = 'markedSnoozed';
