@@ -564,7 +564,6 @@ bot.dialog('/sendOwnerNotification', [
 
         var EntityId = args.EntityId;
 
-        //session.send("Hi " + args.EntityId + ", Can you please confirm that you are safe? :-)");
         builder.Prompts.choice(session, "Hi " + args.OwnerName + ", Can you please confirm that you are safe? :-)", "All good|Check again in 5 minutes|Check again in 15 minutes|Check again in 60 minutes|Help me please!");
 
         var LogChangeTimeStamp = moment().format(DateFormat); 
@@ -573,8 +572,6 @@ bot.dialog('/sendOwnerNotification', [
             { "_id": args.EntityId },
             { $set: { 'EntityStatus': 'PendingOwnerSafe', 'ProcessedTime':LogChangeTimeStamp } }
         ); 
-
-        //session.endDialog();
 
         session.endConversation()
 
