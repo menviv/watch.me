@@ -563,7 +563,7 @@ bot.dialog('/sendOwnerNotification', [
 
         var o_ID = new mongo.ObjectID(args.EntityId);
 
-        var EntityId = args.EntityId;
+        session.userData.EntityId = args.EntityId;
 
         builder.Prompts.choice(session, "Hi " + args.OwnerName + ", Can you please confirm that you are safe? :-)", "All good|Check again in 5 minutes|Check again in 15 minutes|Check again in 60 minutes|Help me please!");
 
@@ -578,7 +578,7 @@ bot.dialog('/sendOwnerNotification', [
 
 
     },
-    function (session, results, args) {
+    function (session, results) {
 
             session.userData.OwnerState = results.response.entity;
 
@@ -645,7 +645,7 @@ bot.dialog('/sendOwnerNotification', [
                 session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
 
                 colEntities.update (
-                    { "_id": args.EntityId },
+                    { "_id": session.userData.EntityId },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
                 ); 
 
@@ -659,7 +659,7 @@ bot.dialog('/sendOwnerNotification', [
                 session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
 
                 colEntities.update (
-                    { "_id": EntityId },
+                    { "_id": session.userData.EntityId },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
                 );  
 
@@ -673,7 +673,7 @@ bot.dialog('/sendOwnerNotification', [
                 session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
 
                 colEntities.update (
-                    { "_id": EntityId },
+                    { "_id": session.userData.EntityId },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
                 ); 
 
@@ -685,7 +685,7 @@ bot.dialog('/sendOwnerNotification', [
             } else if (OwnerState == 'Help me please!') {
 
                 colEntities.update (
-                    { "_id": EntityId },
+                    { "_id": session.userData.EntityId },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'OwnerResponseTime':LogChangeTimeStamp } }
                 ); 
 
@@ -700,7 +700,7 @@ bot.dialog('/sendOwnerNotification', [
 
 
                 colEntities.update (
-                    { "_id": EntityId },
+                    { "_id": session.userData.EntityId },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'OwnerResponseTime':LogChangeTimeStamp } }
                 );  
 
@@ -725,7 +725,7 @@ bot.dialog('/sendOwnerNotification', [
             session.userData.OwnerImmidiateDangerAction = results.response.entity;
 
                 colEntities.update (
-                    { "_id": EntityId },
+                    { "_id": session.userData.EntityId },
                     { $set: { 'EntityStatus': 'OwnerNeedsImmidiateHelp', 'OwnerStateAction':session.userData.OwnerImmidiateDangerAction, 'OwnerResponseTime':LogChangeTimeStamp } }
                 );
 
