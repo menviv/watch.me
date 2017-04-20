@@ -614,7 +614,26 @@ bot.dialog('/sendOwnerNotification', [
 
                     session.beginDialog("/SafetyInstructions");   
 
-                } 
+                } else {
+
+                    var LogTimeStamp = moment().format(DateFormat);
+
+                    var newRecord = {
+                        'CreatedTime': LogTimeStamp,
+                        'DatePhoneNumber': session.userData.ExtractedDatePhoneNumber,
+                        'OwnerName' : session.userData.Name,
+                        'userid': session.message.user.id,
+                        'address': session.message.address,
+                        'NextVerifyAftere': numberOwnerState,
+                        'RecordType': 'AskedToBeVerified',
+                        'Status': 'active'
+                    };
+
+                    colDates.insert(newRecord, function(err, result){});  
+
+                    session.beginDialog("/SafetyInstructions");  
+
+                }
             };
 
 
