@@ -313,17 +313,17 @@ bot.dialog('/', [
     },
     function (session, results) {
 
-        session.userData.pastFamiliarity = results.response.entity;
+        session.userData.StartVerifyMinutes = results.response.entity;
 
         session.sendTyping();
 
-        builder.Prompts.choice(session, "When do you want me to start verify your level of confident in the situation? '['minutes']' ", "5|15|30|60");
+        builder.Prompts.choice(session, "Now let's be honest with each other... how well do you know the person that you intend to meet?", "Never met before|Knows very little |They are well known|I met once in the past");
   
     },
     
     function (session, results) {
 
-        session.userData.StartVerifyMinutes = results.response.entity;
+        session.userData.pastFamiliarity = results.response.entity;
 
         var timeToadd = parseInt(session.userData.StartVerifyMinutes);
 
