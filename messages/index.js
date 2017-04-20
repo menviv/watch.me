@@ -578,7 +578,7 @@ bot.dialog('/sendOwnerNotification', [
 
 
     },
-    function (session, results) {
+    function (session, results, args) {
 
             session.userData.OwnerState = results.response.entity;
 
