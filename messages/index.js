@@ -99,9 +99,9 @@ schedule.scheduleJob(rule, function(){
 
                                         var OwnerName = result[i].OwnerName; 
 
-                                        bot.beginDialog(Address, '/sendOwnerNotification', { EntityId: EntityId, userid: userid, OwnerName: OwnerName });
+                                        var ExtractedDatePhoneNumber = result[i].ExtractedDatePhoneNumber; 
 
-                                        //sendOwnerNotification(userid, Address, EntityId);
+                                        bot.beginDialog(Address, '/sendOwnerNotification', { EntityId: EntityId, userid: userid, OwnerName: OwnerName, ExtractedDatePhoneNumber: ExtractedDatePhoneNumber });
 
                                     }
 
@@ -441,6 +441,7 @@ bot.dialog('/', [
                             'locationDetails': session.userData.locationDetails,
                             'pastFamiliarity': session.userData.pastFamiliarity,
                             'MapImgURL': MapImgURL,
+                            'ExtractedDatePhoneNumber': session.userData.ExtractedDatePhoneNumber,
                             'StartVerifyUTCtime': session.userData.StartVerifyUTCtime,
                             'StartVerifyMinutes': session.userData.StartVerifyMinutes,
                             'OwnerPhoneNumber': session.userData.OwnerPhoneNumber,
@@ -518,6 +519,7 @@ bot.dialog('/', [
               'locationDetails': session.userData.locationDetails,
               'pastFamiliarity': session.userData.pastFamiliarity,
               'MapImgURL': MapImgURL,
+              'ExtractedDatePhoneNumber': session.userData.ExtractedDatePhoneNumber,
               'StartVerifyUTCtime': session.userData.StartVerifyUTCtime,
               'StartVerifyMinutes': session.userData.StartVerifyMinutes,
               'friendPhone': smsNumasStr,
@@ -565,6 +567,8 @@ bot.dialog('/sendOwnerNotification', [
 
         session.userData.EntityId = args.EntityId;
 
+        session.userData.ExtractedDatePhoneNumber = args.ExtractedDatePhoneNumber;
+
         builder.Prompts.choice(session, "Hi " + args.OwnerName + ", Can you please confirm that you are safe? :-)", "All good|Check again in 5 minutes|Check again in 15 minutes|Check again in 60 minutes|Help me please!");
 
         var LogChangeTimeStamp = moment().format(DateFormat); 
@@ -591,7 +595,7 @@ bot.dialog('/sendOwnerNotification', [
 
             function SaveDateAnalytics(numberOwnerState) {
 
-                 if (session.userData.ExtractedDatePhoneNumber) {
+                 if (session.userData.ExtractedDatePhoneNumber != '') {
 
                     var LogTimeStamp = moment().format(DateFormat);
 
