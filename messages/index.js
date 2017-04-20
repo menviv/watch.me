@@ -248,6 +248,8 @@ bot.dialog('/', [
 
         session.userData.ExtractedDatePhoneNumber = DatePhoneNumber.replace( /^\D+/g, '');
 
+        session.send("ExtractedDatePhoneNumber: " + session.userData.ExtractedDatePhoneNumber);
+
         function SearchDateByPhone() {
 
                         var cursor = colDates.find({ 'DatePhoneNumber': ssession.userData.ExtractedDatePhoneNumber });
