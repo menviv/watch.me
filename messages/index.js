@@ -595,6 +595,8 @@ bot.dialog('/sendOwnerNotification', [
 
             function SaveDateAnalytics(numberOwnerState) {
 
+                 session.send("SaveDateAnalytics");
+
                  if (session.userData.ExtractedDatePhoneNumber != '') {
 
                     var LogTimeStamp = moment().format(DateFormat);
@@ -664,6 +666,8 @@ bot.dialog('/sendOwnerNotification', [
 
 
             if (numberOwnerState == 5) {
+
+                numberOwnerState = numberOwnerState-4;
 
 /*                session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
 
