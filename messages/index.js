@@ -300,7 +300,7 @@ bot.dialog('/', [
 
         };
 
-        function SearchDateByPhone();
+        SearchDateByPhone();
   
 
         session.sendTyping();
