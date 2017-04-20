@@ -591,7 +591,7 @@ bot.dialog('/sendOwnerNotification', [
 
             function SaveDateAnalytics(numberOwnerState) {
 
-                 if (session.userData.ExtractedDatePhoneNumber != '') {
+                 if (session.userData.ExtractedDatePhoneNumber) {
 
                     var LogTimeStamp = moment().format(DateFormat);
 
@@ -720,7 +720,7 @@ bot.dialog('/sendOwnerNotification', [
       
         
     },
-        function (session, results) {
+    function (session, results) {
 
             session.userData.OwnerImmidiateDangerAction = results.response.entity;
 
