@@ -71,50 +71,109 @@ schedule.scheduleJob(rule, function(){
 
             var currentUTCtime = moment().add(1, 's');
 
-            var cursor = colEntities.find({ 'EntityStatus': 'pending' });
-                        
-            var result = [];
-            cursor.each(function(err, doc) {
-                if(err)
-                    throw err;
-                        if (doc === null) {
+            function GetNewEntities() {
 
-                            if (result.length>0) {
+                var cursor = colEntities.find({ 'EntityStatus': 'pending' });
+                            
+                var result = [];
+                cursor.each(function(err, doc) {
+                    if(err)
+                        throw err;
+                            if (doc === null) {
 
-                                for (i=0; i<result.length; i++) {
+                                if (result.length>0) {
 
-                                    var StartVerifyUTCtime = result[i].StartVerifyUTCtime; 
+                                    for (i=0; i<result.length; i++) {
 
-                                    var diff = moment(StartVerifyUTCtime).diff(currentUTCtime);
+                                        var StartVerifyUTCtime = result[i].StartVerifyUTCtime; 
 
-                                    if (diff < 0) {
+                                        var diff = moment(StartVerifyUTCtime).diff(currentUTCtime);
 
-                                        var LogTimeStame = moment().format(DateFormat); 
+                                        if (diff < 0) {
 
-                                        var EntityId = result[i]._id; 
+                                            var LogTimeStame = moment().format(DateFormat); 
 
-                                        var Address = result[i].address; 
+                                            var EntityId = result[i]._id; 
 
-                                        var userid = result[i].userid; 
+                                            var Address = result[i].address; 
 
-                                        var OwnerName = result[i].OwnerName; 
+                                            var userid = result[i].userid; 
 
-                                        var ExtractedDatePhoneNumber = result[i].ExtractedDatePhoneNumber; 
+                                            var OwnerName = result[i].OwnerName; 
 
-                                        bot.beginDialog(Address, '/sendOwnerNotification', { EntityId: EntityId, userid: userid, OwnerName: OwnerName, ExtractedDatePhoneNumber: ExtractedDatePhoneNumber });
+                                            var ExtractedDatePhoneNumber = result[i].ExtractedDatePhoneNumber; 
 
-                                    }
+                                            bot.beginDialog(Address, '/sendOwnerNotification', { EntityId: EntityId, userid: userid, OwnerName: OwnerName, ExtractedDatePhoneNumber: ExtractedDatePhoneNumber });
 
-                                }   
-                        
-                                                
-                            } 
+                                        }
 
-                                return;
-                            }
+                                    }   
+                            
+                                                    
+                                } 
 
-                            result.push(doc);
-            }); 
+                                    return;
+                                }
+
+                                result.push(doc);
+                }); 
+
+            }
+
+
+
+            function GetSnoozedEntities() {
+
+                var cursor = colEntities.find({ 'EntityStatus': 'pending' });
+                            
+                var result = [];
+                cursor.each(function(err, doc) {
+                    if(err)
+                        throw err;
+                            if (doc === null) {
+
+                                if (result.length>0) {
+
+                                    for (i=0; i<result.length; i++) {
+
+                                        var StartVerifyUTCtime = result[i].StartVerifyUTCtime; 
+
+                                        var diff = moment(StartVerifyUTCtime).diff(currentUTCtime);
+
+                                        if (diff < 0) {
+
+                                            var LogTimeStame = moment().format(DateFormat); 
+
+                                            var EntityId = result[i]._id; 
+
+                                            var Address = result[i].address; 
+
+                                            var userid = result[i].userid; 
+
+                                            var OwnerName = result[i].OwnerName; 
+
+                                            var ExtractedDatePhoneNumber = result[i].ExtractedDatePhoneNumber; 
+
+                                            bot.beginDialog(Address, '/sendOwnerNotification', { EntityId: EntityId, userid: userid, OwnerName: OwnerName, ExtractedDatePhoneNumber: ExtractedDatePhoneNumber });
+
+                                        }
+
+                                    }   
+                            
+                                                    
+                                } 
+
+                                    return;
+                                }
+
+                                result.push(doc);
+                }); 
+
+            }
+
+
+
+            GetNewEntities();
 
 
             function sendOwnerNotification(userid, Address, EntityId) {
@@ -686,7 +745,7 @@ bot.dialog('/sendOwnerNotification', [
 
                 colEntities.update (
                     { "_id": o_ID },
-                    { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
+                    { $set: { 'EntityStatus': 'OwnerAskedToBeVerified', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
                 ); 
 
                 SaveDateAnalytics(numberOwnerState);
@@ -702,7 +761,7 @@ bot.dialog('/sendOwnerNotification', [
 
                 colEntities.update (
                     { "_id": o_ID },
-                    { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
+                    { $set: { 'EntityStatus': 'OwnerAskedToBeVerified', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
                 );  
 
                 SaveDateAnalytics(numberOwnerState);   
@@ -718,7 +777,7 @@ bot.dialog('/sendOwnerNotification', [
 
                 colEntities.update (
                     { "_id": o_ID },
-                    { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
+                    { $set: { 'EntityStatus': 'OwnerAskedToBeVerified', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
                 ); 
 
                 SaveDateAnalytics(numberOwnerState);    
