@@ -268,7 +268,7 @@ bot.dialog('/', [
 
                                         session.send("OK, I know this one, but couldn't allocate any bad impressions assosiated with it. Still let my watch you until you feel that you are safe.");
 
-                                        builder.Prompts.choice(session, "When do you want me to start verify your level of confident in the situation? '['minutes']' ", "5|15|30|60");
+                                        builder.Prompts.choice(session, "When do you want me to start verify your level of confident in the situation? '['minutes']' ", "1|5|15|30|60");
 
             
                                 } else {
@@ -689,13 +689,13 @@ bot.dialog('/sendOwnerNotification', [
 
             if (numberOwnerState == 5) {
 
-/*                session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
+               session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
 
                 colEntities.update (
                     { "_id": session.userData.EntityId },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
                 ); 
-*/
+
                 SaveDateAnalytics(numberOwnerState);
 
                 session.userData.SafetyInstructions = 'markedSnoozed';
@@ -747,8 +747,10 @@ bot.dialog('/sendOwnerNotification', [
 
                 session.send("session.userData.EntityId: " + session.userData.EntityId); 
 
+                var o_ID = new mongo.ObjectID(session.userData.EntityId);
+
                 colEntities.update (
-                    { "_id": session.userData.EntityId },
+                    { "_id": o_ID },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'OwnerResponseTime':LogChangeTimeStamp } }
                 );  
 
