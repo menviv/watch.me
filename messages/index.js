@@ -669,8 +669,6 @@ bot.dialog('/sendOwnerNotification', [
 
             var numberOwnerState = OwnerState.replace( /^\D+/g, '');
 
-            session.send("numberOwnerState: " + numberOwnerState);
-
             var LogChangeTimeStamp = moment().format(DateFormat); 
 
             var o_ID = new mongo.ObjectID(session.userData.EntityId);
@@ -751,9 +749,11 @@ bot.dialog('/sendOwnerNotification', [
 
             if (OwnerState == 'Check again in 5 minutes') {
 
-               var timeToadd = parseInt('5');
+               var timeToSnooze = parseInt('5');
 
-               session.userData.NextVerifyUTCtime = moment().add(timeToadd, 'm');
+               session.userData.NextVerifyUTCtime = moment().add(timeToSnooze, 'm');
+
+               session.userData.timeToSnooze = timeToSnooze; 
 
                 colEntities.update (
                     { "_id": o_ID },
@@ -767,9 +767,11 @@ bot.dialog('/sendOwnerNotification', [
 
             } else if (OwnerState == 'Check again in 15 minutes') {
 
-               var timeToadd = parseInt('15');
+               var timeToSnooze = parseInt('15');
 
-               session.userData.NextVerifyUTCtime = moment().add(timeToadd, 'm');
+               session.userData.NextVerifyUTCtime = moment().add(timeToSnooze, 'm');
+
+               session.userData.timeToSnooze = timeToSnooze; 
 
                 colEntities.update (
                     { "_id": o_ID },
@@ -783,9 +785,11 @@ bot.dialog('/sendOwnerNotification', [
 
             } else if (OwnerState == 'Check again in 60 minutes') {
 
-               var timeToadd = parseInt('60');
+               var timeToSnooze = parseInt('60');
 
-               session.userData.NextVerifyUTCtime = moment().add(timeToadd, 'm');
+               session.userData.NextVerifyUTCtime = moment().add(timeToSnooze, 'm');
+
+               session.userData.timeToSnooze = timeToSnooze; 
 
                 colEntities.update (
                     { "_id": o_ID },
