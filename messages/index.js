@@ -662,12 +662,32 @@ bot.dialog('/sendOwnerNotification', [
             };
 
 
+            function SafeDateStatusReported(OwnerState) {
+
+                 if (session.userData.ExtractedDatePhoneNumber != '') {
+
+                    var LogTimeStamp = moment().format(DateFormat);
+
+                    var newRecord = {
+                        'CreatedTime': LogTimeStamp,
+                        'DatePhoneNumber': session.userData.ExtractedDatePhoneNumber,
+                        'OwnerName' : session.userData.Name,
+                        'userid': session.message.user.id,
+                        'address': session.message.address,
+                        'OwnerState': OwnerState,
+                        'RecordType': 'UserIsSafe',
+                        'Status': 'active'
+                    };
+
+                    colDates.insert(newRecord, function(err, result){});    
+
+                } 
+            };
+
 
 
 
             if (numberOwnerState == 5) {
-
-                numberOwnerState = numberOwnerState-4;
 
 /*                session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
 
@@ -725,13 +745,14 @@ bot.dialog('/sendOwnerNotification', [
 
             } else if (OwnerState == 'All good') {
 
+                session.send("session.userData.EntityId"); 
 
                 colEntities.update (
                     { "_id": session.userData.EntityId },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'OwnerResponseTime':LogChangeTimeStamp } }
                 );  
 
-                DateStatusReported(OwnerState);  
+                SafeDateStatusReported(OwnerState);  
 
                 session.send("Good to know! Enjoy and keep safe :-)"); 
 
