@@ -592,6 +592,8 @@ bot.dialog('/sendOwnerNotification', [
 
             var LogChangeTimeStamp = moment().format(DateFormat); 
 
+            var o_ID = new mongo.ObjectID(session.userData.EntityId);
+
 
             function SaveDateAnalytics(numberOwnerState) {
 
@@ -692,7 +694,7 @@ bot.dialog('/sendOwnerNotification', [
                session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
 
                 colEntities.update (
-                    { "_id": session.userData.EntityId },
+                    { "_id": o_ID },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
                 ); 
 
@@ -706,7 +708,7 @@ bot.dialog('/sendOwnerNotification', [
                 session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
 
                 colEntities.update (
-                    { "_id": session.userData.EntityId },
+                    { "_id": o_ID },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
                 );  
 
@@ -720,7 +722,7 @@ bot.dialog('/sendOwnerNotification', [
                 session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
 
                 colEntities.update (
-                    { "_id": session.userData.EntityId },
+                    { "_id": o_ID },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'NextVerifyUTCtime': session.userData.NextVerifyUTCtime, 'OwnerResponseTime':LogChangeTimeStamp } }
                 ); 
 
@@ -732,7 +734,7 @@ bot.dialog('/sendOwnerNotification', [
             } else if (OwnerState == 'Help me please!') {
 
                 colEntities.update (
-                    { "_id": session.userData.EntityId },
+                    { "_id": o_ID },
                     { $set: { 'EntityStatus': 'OwnerRespond', 'OwnerState':session.userData.OwnerState, 'OwnerResponseTime':LogChangeTimeStamp } }
                 ); 
 
@@ -744,10 +746,6 @@ bot.dialog('/sendOwnerNotification', [
 
 
             } else if (OwnerState == 'All good') {
-
-                session.send("session.userData.EntityId: " + session.userData.EntityId); 
-
-                var o_ID = new mongo.ObjectID(session.userData.EntityId);
 
                 colEntities.update (
                     { "_id": o_ID },
