@@ -689,7 +689,7 @@ bot.dialog('/sendOwnerNotification', [
 
 
 
-            if (numberOwnerState == 5) {
+            if (numberOwnerState == '5') {
 
                session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
 
