@@ -693,6 +693,8 @@ bot.dialog('/sendOwnerNotification', [
 
                     colDates.insert(newRecord, function(err, result){});  
 
+                    session.send("I'm on it snooze again on: " + session.userData.NextVerifyUTCtime)
+
                     session.beginDialog("/SafetyInstructions");   
 
                 } 
