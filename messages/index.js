@@ -193,7 +193,15 @@ bot.dialog('/', [
 
             } else {
 
-                builder.Prompts.choice(session, "So, you need me to be availble with you at: ", "Home|At someone's home");
+                if (session.userData.newEntity != 'true') {
+
+                    builder.Prompts.choice(session, "So, you need me to be availble with you at: ", "Home|At someone's home");
+
+                } else {
+
+                    builder.Prompts.choice(session, "You're back! I guess you like my watching :-). So where do you need my watching this time? ", "Home|At someone's home");
+
+                }
 
             }
      
@@ -291,7 +299,7 @@ bot.dialog('/', [
 
                                         session.send("I don't know if it's good or not but this number I don't know this number or none of my friends shared it with me..");
 
-                                        builder.Prompts.choice(session, "When do you want me to start verify your level of confident in the situation? '['minutes']' ", "5|15|30|60");
+                                        builder.Prompts.choice(session, "When do you want me to start verify your level of confident in the situation? '['minutes']' ", "1|5|15|30|60");
 
 
 
@@ -940,6 +948,31 @@ bot.dialog('restartDialog', function (session, args) {
                 // allowed to return additional properties which will be passed along to
                 // the triggered dialog.
                 callback(null, 1.0, { topic: 'restart' });
+                break;
+            default:
+                callback(null, 0.0);
+                break;
+        }
+    } 
+});
+
+
+bot.dialog('newEntityDialog', function (session, args) {
+
+    session.userData.newEntity = 'true';
+
+    session.beginDialog("/");
+
+
+}).triggerAction({ 
+    onFindAction: function (context, callback) {
+        // Recognize users utterance
+        switch (context.message.text.toLowerCase()) {
+            case '/new':
+                // You can trigger the action with callback(null, 1.0) but you're also
+                // allowed to return additional properties which will be passed along to
+                // the triggered dialog.
+                callback(null, 1.0, { topic: 'new' });
                 break;
             default:
                 callback(null, 0.0);
