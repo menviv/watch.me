@@ -745,7 +745,7 @@ bot.dialog('/sendOwnerNotification', [
 
             } else if (OwnerState == 'All good') {
 
-                session.send("session.userData.EntityId"); 
+                session.send("session.userData.EntityId: " + session.userData.EntityId); 
 
                 colEntities.update (
                     { "_id": session.userData.EntityId },
