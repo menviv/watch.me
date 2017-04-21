@@ -607,8 +607,6 @@ bot.dialog('/sendOwnerNotification', [
 
             function SaveDateAnalytics(numberOwnerState) {
 
-                 session.send("SaveDateAnalytics");
-
                  if (session.userData.ExtractedDatePhoneNumber != '') {
 
                     var LogTimeStamp = moment().format(DateFormat);
@@ -628,26 +626,7 @@ bot.dialog('/sendOwnerNotification', [
 
                     session.beginDialog("/SafetyInstructions");   
 
-                } else {
-
-                    var LogTimeStamp = moment().format(DateFormat);
-
-                    var newRecord = {
-                        'CreatedTime': LogTimeStamp,
-                        'DatePhoneNumber': session.userData.ExtractedDatePhoneNumber,
-                        'OwnerName' : session.userData.Name,
-                        'userid': session.message.user.id,
-                        'address': session.message.address,
-                        'NextVerifyAftere': numberOwnerState,
-                        'RecordType': 'AskedToBeVerified',
-                        'Status': 'active'
-                    };
-
-                    colDates.insert(newRecord, function(err, result){});  
-
-                    session.beginDialog("/SafetyInstructions");  
-
-                }
+                } 
             };
 
 
@@ -701,7 +680,9 @@ bot.dialog('/sendOwnerNotification', [
 
             if (OwnerState == 'Check again in 5 minutes') {
 
-               session.userData.NextVerifyUTCtime = moment().add(5, 'm');
+               var timeToadd = parseInt('5');
+
+               session.userData.NextVerifyUTCtime = moment().add(timeToadd, 'm');
 
                 colEntities.update (
                     { "_id": o_ID },
@@ -715,7 +696,9 @@ bot.dialog('/sendOwnerNotification', [
 
             } else if (OwnerState == 'Check again in 15 minutes') {
 
-                session.userData.NextVerifyUTCtime = moment().add(15, 'm');
+               var timeToadd = parseInt('15');
+
+               session.userData.NextVerifyUTCtime = moment().add(timeToadd, 'm');
 
                 colEntities.update (
                     { "_id": o_ID },
@@ -729,7 +712,9 @@ bot.dialog('/sendOwnerNotification', [
 
             } else if (OwnerState == 'Check again in 60 minutes') {
 
-                session.userData.NextVerifyUTCtime = moment().add(60, 'm');
+               var timeToadd = parseInt('60');
+
+               session.userData.NextVerifyUTCtime = moment().add(timeToadd, 'm');
 
                 colEntities.update (
                     { "_id": o_ID },
