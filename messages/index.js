@@ -103,7 +103,7 @@ schedule.scheduleJob(rule, function(){
 
                                             var ExtractedDatePhoneNumber = result[i].ExtractedDatePhoneNumber; 
 
-                                            bot.beginDialog(Address, '/sendOwnerNotification', { EntityId: EntityId, userid: userid, OwnerName: OwnerName, ExtractedDatePhoneNumber: ExtractedDatePhoneNumber });
+                                            bot.beginDialog(Address, '/sendOwnerNotification', { EntityId: EntityId, userid: userid, OwnerName: OwnerName, ExtractedDatePhoneNumber: ExtractedDatePhoneNumber, type:'new' });
 
                                         }
 
@@ -124,7 +124,7 @@ schedule.scheduleJob(rule, function(){
 
             function GetSnoozedEntities() {
 
-                var cursor = colEntities.find({ 'EntityStatus': 'pending' });
+                var cursor = colEntities.find({ 'EntityStatus': 'OwnerAskedToBeVerified' });
                             
                 var result = [];
                 cursor.each(function(err, doc) {
@@ -136,9 +136,9 @@ schedule.scheduleJob(rule, function(){
 
                                     for (i=0; i<result.length; i++) {
 
-                                        var StartVerifyUTCtime = result[i].StartVerifyUTCtime; 
+                                        var NextVerifyUTCtime = result[i].NextVerifyUTCtime; 
 
-                                        var diff = moment(StartVerifyUTCtime).diff(currentUTCtime);
+                                        var diff = moment(NextVerifyUTCtime).diff(currentUTCtime);
 
                                         if (diff < 0) {
 
@@ -154,7 +154,7 @@ schedule.scheduleJob(rule, function(){
 
                                             var ExtractedDatePhoneNumber = result[i].ExtractedDatePhoneNumber; 
 
-                                            bot.beginDialog(Address, '/sendOwnerNotification', { EntityId: EntityId, userid: userid, OwnerName: OwnerName, ExtractedDatePhoneNumber: ExtractedDatePhoneNumber });
+                                            bot.beginDialog(Address, '/sendOwnerNotification', { EntityId: EntityId, userid: userid, OwnerName: OwnerName, ExtractedDatePhoneNumber: ExtractedDatePhoneNumber, type:'snoozed' });
 
                                         }
 
@@ -174,6 +174,8 @@ schedule.scheduleJob(rule, function(){
 
 
             GetNewEntities();
+
+            GetSnoozedEntities(); 
 
 
             function sendOwnerNotification(userid, Address, EntityId) {
@@ -632,11 +634,21 @@ bot.dialog('/sendOwnerNotification', [
 
         var o_ID = new mongo.ObjectID(args.EntityId);
 
+        session.userData.Notificationtype = args.type;
+
         session.userData.EntityId = args.EntityId;
 
         session.userData.ExtractedDatePhoneNumber = args.ExtractedDatePhoneNumber;
 
-        builder.Prompts.choice(session, "Hi " + args.OwnerName + ", Can you please confirm that you are safe? :-)", "All good|Check again in 5 minutes|Check again in 15 minutes|Check again in 60 minutes|Help me please!");
+        if (args.type == 'snoozed') {
+
+            builder.Prompts.choice(session, "Hi again " + args.OwnerName + ", Can you please Re-Confirm that you are safe?", "All good|Check again in 5 minutes|Check again in 15 minutes|Check again in 60 minutes|Help me please!");
+
+        } else {
+
+            builder.Prompts.choice(session, "Hi " + args.OwnerName + ", Can you please confirm that you are safe? :-)", "All good|Check again in 5 minutes|Check again in 15 minutes|Check again in 60 minutes|Help me please!");
+
+        }
 
         var LogChangeTimeStamp = moment().format(DateFormat); 
 
@@ -840,8 +852,6 @@ bot.dialog('/sendOwnerNotification', [
         }
 
 ]);
-
-
 
 
 
