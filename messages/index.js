@@ -590,6 +590,8 @@ bot.dialog('/sendOwnerNotification', [
 
             var numberOwnerState = OwnerState.replace( /^\D+/g, '');
 
+            session.send("numberOwnerState: " + numberOwnerState);
+
             var LogChangeTimeStamp = moment().format(DateFormat); 
 
             var o_ID = new mongo.ObjectID(session.userData.EntityId);
