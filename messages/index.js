@@ -699,9 +699,9 @@ bot.dialog('/sendOwnerNotification', [
 
 
 
-            if (numberOwnerState == '5') {
+            if (OwnerState == 'Check again in 5 minutes') {
 
-               session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
+               session.userData.NextVerifyUTCtime = moment().add(5, 'm');
 
                 colEntities.update (
                     { "_id": o_ID },
@@ -713,9 +713,9 @@ bot.dialog('/sendOwnerNotification', [
                 session.userData.SafetyInstructions = 'markedSnoozed';
 
 
-            } else if (numberOwnerState == 15) {
+            } else if (OwnerState == 'Check again in 15 minutes') {
 
-                session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
+                session.userData.NextVerifyUTCtime = moment().add(15, 'm');
 
                 colEntities.update (
                     { "_id": o_ID },
@@ -727,9 +727,9 @@ bot.dialog('/sendOwnerNotification', [
                 session.userData.SafetyInstructions = 'markedSnoozed';
 
 
-            } else if (numberOwnerState == 60) {
+            } else if (OwnerState == 'Check again in 60 minutes') {
 
-                session.userData.NextVerifyUTCtime = moment().add(numberOwnerState, 'm');
+                session.userData.NextVerifyUTCtime = moment().add(60, 'm');
 
                 colEntities.update (
                     { "_id": o_ID },
