@@ -1084,15 +1084,11 @@ bot.dialog('myEntitiesDialog',
 
                                 if (result.length>0) {
                                     
-                                    session.userData.authanticated = 'true';
-
-                                    session.userData.Name = result[0].userName;
-
                                     session.sendTyping();
 
-                                   // session.send("OK " + session.userData.Name + ", now I remember you..");
+                                    session.send( i+1 + ". " + result[i].StartVerifyUTCtime + "/n " + result[i].userReMessage);
 
-                                   // session.beginDialog("/");
+                                    builder.Prompts.choice(session, "Do you need my watching services again??", "Yes|NO"); 
             
                                 } else {
 
@@ -1100,7 +1096,7 @@ bot.dialog('myEntitiesDialog',
 
                                     session.send("I don't know if it's good or bad, but I don't know of any active watching task associated with you :/" );
 
-                                    builder.Prompts.choice(session, "Did I miss anything??", "Yes|NO"); 
+                                    builder.Prompts.choice(session, "Did I miss anything?", "I think so|None"); 
 
                                 }
 
@@ -1114,11 +1110,32 @@ bot.dialog('myEntitiesDialog',
 
     }
 
+    GetMyWatchers();
+
 
  },
  function (session, results) {
 
         session.userData.OwnerPhoneNumber = results.response.entity;
+
+
+        if (results.response.entity == 'Yes') {
+
+              session.beginDialog("/");
+
+        } else if (results.response.entity == 'I think so') {
+
+              session.send("Ok, let me get back to you after checking again." );
+
+        } else if (results.response.entity == 'None' || results.response.entity == 'NO') {
+            
+              session.send("See you soon and keep safe!" );
+
+              session.endConversation();
+        } 
+
+
+
 
         session.send("Next version... promise :-)"); 
   
