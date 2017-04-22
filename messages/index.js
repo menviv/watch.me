@@ -495,12 +495,13 @@ bot.dialog('/', [
                             " at arround " + session.userData.StartVerifyUTCtime +
                             " to meet someone that they " + session.userData.pastFamiliarity;                        
 
-                        session.send(
+                        session.userData.userMessage =
                             "Got it! you plan to be at " + session.userData.locationType +
                             " that is located in " + session.userData.locationDetails +
                             " at arround " + session.userData.StartVerifyUTCtime +
-                            " to meet someone that you defined as " + session.userData.pastFamiliarity
-                        );
+                            " to meet someone that you defined as " + session.userData.pastFamiliarity;
+
+                        session.send(session.userData.userMessage);
 
                         var LogTimeStamp = moment().format(DateFormat);
 
@@ -517,6 +518,7 @@ bot.dialog('/', [
                             'OwnerName' : session.userData.Name,
                             'userid': session.message.user.id,
                             'address': session.message.address,
+                            'userMessage': session.userData.userMessage,
                             'connectionMessage': session.userData.connectionMessage,
                             'EntityStatus': 'pending'
                         };
@@ -573,12 +575,13 @@ bot.dialog('/', [
             " at arround " + session.userData.StartVerifyUTCtime +
             " to meet someone that they " + session.userData.pastFamiliarity;                        
 
-        session.send(
+        session.userData.userMessage =
             "Got it! you plan to be at " + session.userData.locationType +
             " that is located in " + session.userData.locationDetails +
             " at arround " + session.userData.StartVerifyUTCtime +
-            " to meet someone that you defined as" + session.userData.pastFamiliarity
-        );
+            " to meet someone that you defined as " + session.userData.pastFamiliarity;
+
+        session.send(session.userData.userMessage);
 
         var LogTimeStamp = moment().format(DateFormat);
 
@@ -597,6 +600,7 @@ bot.dialog('/', [
               'OwnerName' : session.userData.Name,
               'userid': session.message.user.id,
               'address': session.message.address,
+              'userMessage': session.userData.userMessage,
               'connectionMessage': session.userData.connectionMessage,
               'EntityStatus': 'pending'
         };
@@ -1039,6 +1043,80 @@ bot.dialog('newEntityDialog', function (session, args) {
                 // allowed to return additional properties which will be passed along to
                 // the triggered dialog.
                 callback(null, 1.0, { topic: 'new' });
+                break;
+            default:
+                callback(null, 0.0);
+                break;
+        }
+    } 
+});
+
+
+bot.dialog('myEntitiesDialog', 
+
+  function (session, args) {
+
+    function GetMyWatchers() {
+
+                        var cursor = colEntities.find({ "userid": session.message.user.id, "EntityStatus": "PendingOwnerSafe" });
+                        
+                        var result = [];
+                        cursor.each(function(err, doc) {
+                            if(err)
+                                throw err;
+                            if (doc === null) {
+                                // doc is null when the last document has been processed
+
+
+                                if (result.length>0) {
+                                    
+                                    session.userData.authanticated = 'true';
+
+                                    session.userData.Name = result[0].userName;
+
+                                    session.sendTyping();
+
+                                   // session.send("OK " + session.userData.Name + ", now I remember you..");
+
+                                   // session.beginDialog("/");
+            
+                                } else {
+
+                                    session.sendTyping();
+
+                                    session.send("I don't know if it's good or bad, but I don't know of any active watching task associated with you :/" );
+
+                                    builder.Prompts.choice(session, "Did I miss anything??", "Yes|NO"); 
+
+                                }
+
+
+                                return;
+                            }
+                            // do something with each doc, like push Email into a results array
+                            result.push(doc);
+                        }); 
+
+
+    }
+
+
+ },
+ function (session, results) {
+
+        session.userData.OwnerPhoneNumber = results.response.entity;
+
+        session.send("Next version... promise :-)"); 
+  
+  }).triggerAction({ 
+    onFindAction: function (context, callback) {
+        // Recognize users utterance
+        switch (context.message.text.toLowerCase()) {
+            case '/mywatcher':
+                // You can trigger the action with callback(null, 1.0) but you're also
+                // allowed to return additional properties which will be passed along to
+                // the triggered dialog.
+                callback(null, 1.0, { topic: 'mywatcher' });
                 break;
             default:
                 callback(null, 0.0);
