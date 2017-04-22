@@ -990,11 +990,19 @@ bot.dialog('/login', [
 
         session.userData.Name = results.response;
 
+        builder.Prompts.text(session, "Nice to meet you " + session.userData.Name + ", and what is your home address?"); 
+
+    },
+    function (session, results) {
+
+        session.userData.ownerHomeAddress = results.response;
+
                var newRecord = {
 
                      'CreatedTime': LogTimeStame,
                      'userName': session.userData.Name,
                      'ownerPhoneNumber': session.userData.OwnerPhoneNumber, 
+                     'ownerHomeAddress': session.userData.ownerHomeAddress, 
                      'address': session.message.address, 
                      'userid': session.message.user.id
                }; 
