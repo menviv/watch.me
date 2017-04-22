@@ -693,7 +693,7 @@ bot.dialog('/sendOwnerNotification', [
 
                     colDates.insert(newRecord, function(err, result){});  
 
-                    session.send("I'm on it snooze again on: " + session.userData.NextVerifyUTCtime)
+                    session.send("I'm on it snooze again in: " + session.userData.timeToSnooze + " minutes. Keep safe...")
 
                     session.beginDialog("/SafetyInstructions");   
 
@@ -753,6 +753,8 @@ bot.dialog('/sendOwnerNotification', [
 
                var timeToSnooze = parseInt('5');
 
+               session.userData.timeToSnooze = timeToSnooze;
+
                session.userData.NextVerifyUTCtime = moment().add(timeToSnooze, 'm');
 
                session.userData.timeToSnooze = timeToSnooze; 
@@ -771,6 +773,8 @@ bot.dialog('/sendOwnerNotification', [
 
                var timeToSnooze = parseInt('15');
 
+               session.userData.timeToSnooze = timeToSnooze;
+
                session.userData.NextVerifyUTCtime = moment().add(timeToSnooze, 'm');
 
                session.userData.timeToSnooze = timeToSnooze; 
@@ -788,6 +792,8 @@ bot.dialog('/sendOwnerNotification', [
             } else if (OwnerState == 'Check again in 60 minutes') {
 
                var timeToSnooze = parseInt('60');
+
+               session.userData.timeToSnooze = timeToSnooze;
 
                session.userData.NextVerifyUTCtime = moment().add(timeToSnooze, 'm');
 
