@@ -1090,7 +1090,7 @@ bot.dialog('myEntitiesDialog',
 
                                         session.send( i+1 + ". " + result[i].StartVerifyUTCtime);
 
-                                        session.send( esult[i].userReMessage);
+                                        session.send( result[i].userReMessage);
 
                                         if (result.length == i) {
 
