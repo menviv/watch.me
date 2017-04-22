@@ -1011,6 +1011,8 @@ bot.dialog('/login', [
 
                session.userData.authanticated = 'true';
 
+               session.userData.newEntity = 'false';
+
                session.beginDialog("/");
 
     }
