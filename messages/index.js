@@ -262,7 +262,7 @@ bot.dialog('/', [
 
                 } else {
 
-                    builder.Prompts.choice(session, "ou're back!, why this time you need me to be availble for you? you plan to: ", "Date Someone|Invite a stranger to your home|Meet someone outdoors|Feel the need to take precaution");
+                    builder.Prompts.choice(session, "You're back!, why this time you need me to be availble for you? you plan to: ", "Date Someone|Invite a stranger to your home|Meet someone outdoors|Feel the need to take precaution");
 
                 }
 
@@ -297,7 +297,7 @@ bot.dialog('/', [
 
             } else {
 
-                builder.Prompts.text(session, "If you think that I should know anything that can help me to keep your safety, please type in as many details as possible: "); 
+                builder.Prompts.text(session, "If you think that I should know anything that can help me to keep your safety, please type in as many details as possible or just 'NO': "); 
 
             }
 
@@ -503,7 +503,7 @@ bot.dialog('/', [
                         session.userData.connectionMessage =
                             "Hi " + session.userData.friendName +
                             " I think that " + session.userData.Name + " might need you immidiate help. " +
-                            " He asked me to be availble bacause " + session.userData.DateType + ". " + 
+                            " He asked me to be availble bacause he planed to " + session.userData.DateType + ". " + 
                             " The plan was to be at " + session.userData.locationType +
                             " and he asked me to be availble bacause " + session.userData.DateType +
                             " that is located in " + session.userData.locationDetails +
@@ -512,14 +512,14 @@ bot.dialog('/', [
 
                         session.userData.userMessage =
                             "Got it! you plan to be at " + session.userData.locationType +
-                            " and you asked me to be availble bacause: " + session.userData.DateType + ". " + 
+                            " and you asked me to be availble bacause you planed to: " + session.userData.DateType + ". " + 
                             " The location is " + session.userData.locationDetails +
                             " and it should take place at arround " + session.userData.StartVerifyUTCtime +
                             " to meet someone that you defined as " + session.userData.pastFamiliarity;
 
                         session.userData.userReMessage =
                             "Your plan was to be at " + session.userData.locationType +
-                            " and you asked me to be availble bacause: " + session.userData.DateType +
+                            " and you asked me to be availble bacause you planed to: " + session.userData.DateType +
                             " that is located in " + session.userData.locationDetails +
                             " at arround " + session.userData.StartVerifyUTCtime +
                             " to meet someone that you defined as " + session.userData.pastFamiliarity + ".";                            
@@ -595,7 +595,7 @@ bot.dialog('/', [
                         session.userData.connectionMessage =
                             "Hi " + session.userData.friendName +
                             " I think that " + session.userData.Name + " might need you immidiate help. " +
-                            " He asked me to be availble bacause " + session.userData.DateType + ". " + 
+                            " He asked me to be availble bacause he planed to " + session.userData.DateType + ". " + 
                             " The plan was to be at " + session.userData.locationType +
                             " and he asked me to be availble bacause " + session.userData.DateType +
                             " that is located in " + session.userData.locationDetails +
@@ -604,14 +604,14 @@ bot.dialog('/', [
 
                         session.userData.userMessage =
                             "Got it! you plan to be at " + session.userData.locationType +
-                            " and you asked me to be availble bacause: " + session.userData.DateType + ". " + 
+                            " and you asked me to be availble bacause you planed to: " + session.userData.DateType + ". " + 
                             " The location is " + session.userData.locationDetails +
                             " and it should take place at arround " + session.userData.StartVerifyUTCtime +
                             " to meet someone that you defined as " + session.userData.pastFamiliarity;
 
                         session.userData.userReMessage =
                             "Your plan was to be at " + session.userData.locationType +
-                            " and you asked me to be availble bacause: " + session.userData.DateType +
+                            " and you asked me to be availble bacause you planed to:" + session.userData.DateType +
                             " that is located in " + session.userData.locationDetails +
                             " at arround " + session.userData.StartVerifyUTCtime +
                             " to meet someone that you defined as " + session.userData.pastFamiliarity + ".";     
