@@ -1086,10 +1086,20 @@ bot.dialog('myEntitiesDialog',
                                     
                                     session.sendTyping();
 
-                                    session.send( i+1 + ". " + result[i].StartVerifyUTCtime + "/n " + result[i].userReMessage);
+                                    for (i=0; i<result.length; i++) {
 
-                                    builder.Prompts.choice(session, "Do you need my watching services again??", "Yes|NO"); 
-            
+                                        session.send( i+1 + ". " + result[i].StartVerifyUTCtime);
+
+                                        session.send( esult[i].userReMessage);
+
+                                        if (result.length == i) {
+
+                                            builder.Prompts.choice(session, "Do you need my watching services again??", "Yes|NO"); 
+
+                                        }
+
+                                    }
+
                                 } else {
 
                                     session.sendTyping();
