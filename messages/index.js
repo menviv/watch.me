@@ -258,17 +258,28 @@ bot.dialog('/', [
 
                 if (session.userData.newEntity != 'true') {
 
-                    builder.Prompts.choice(session, "So, you need me to be availble with you at: ", "Home|At someone's home");
+                    builder.Prompts.choice(session, "So, why do you need me to be availble with you? you plan to: ", "Date Someone|Invite a stranger to your home|Meen someone outdoors|Feel the need to take precaution");
 
                 } else {
 
-                    builder.Prompts.choice(session, "You're back! I guess you like my watching :-). So where do you need my watching this time? ", "Home|At someone's home");
+                    builder.Prompts.choice(session, "ou're back!, why this time you need me to be availble for you? you plan to: ", "Date Someone|Invite a stranger to your home|Meet someone outdoors|Feel the need to take precaution");
 
                 }
 
             }
      
 
+    },
+    function (session, results) {
+
+        if (results.response) {
+
+            session.userData.DateType = results.response.entity;
+
+            builder.Prompts.choice(session, "Where is it going to take place? ", "Home|Outdoors");
+     
+        } 
+        
     },
     function (session, results) {
 
@@ -492,19 +503,23 @@ bot.dialog('/', [
                         session.userData.connectionMessage =
                             "Hi " + session.userData.friendName +
                             " I think that " + session.userData.Name + " might need you immidiate help. " +
+                            " He asked me to be availble bacause " + session.userData.DateType + ". " + 
                             " The plan was to be at " + session.userData.locationType +
+                            " and he asked me to be availble bacause " + session.userData.DateType +
                             " that is located in " + session.userData.locationDetails +
                             " at arround " + session.userData.StartVerifyUTCtime +
                             " to meet someone that they " + session.userData.pastFamiliarity;                        
 
                         session.userData.userMessage =
                             "Got it! you plan to be at " + session.userData.locationType +
-                            " that is located in " + session.userData.locationDetails +
-                            " at arround " + session.userData.StartVerifyUTCtime +
+                            " and you asked me to be availble bacause: " + session.userData.DateType + ". " + 
+                            " The location is " + session.userData.locationDetails +
+                            " and it should take place at arround " + session.userData.StartVerifyUTCtime +
                             " to meet someone that you defined as " + session.userData.pastFamiliarity;
 
                         session.userData.userReMessage =
                             "Your plan was to be at " + session.userData.locationType +
+                            " and you asked me to be availble bacause: " + session.userData.DateType +
                             " that is located in " + session.userData.locationDetails +
                             " at arround " + session.userData.StartVerifyUTCtime +
                             " to meet someone that you defined as " + session.userData.pastFamiliarity + ".";                            
@@ -515,6 +530,7 @@ bot.dialog('/', [
 
                         var newRecord = {
                             'CreatedTime': LogTimeStamp,
+                            'DateType': session.userData.DateType,
                             'locationType': session.userData.locationType,
                             'locationDetails': session.userData.locationDetails,
                             'pastFamiliarity': session.userData.pastFamiliarity,
@@ -576,32 +592,38 @@ bot.dialog('/', [
   
         session.sendTyping();
 
-        session.userData.connectionMessage =
-            "Hi " + session.userData.friendName +
-            " I think that " + session.userData.Name + " might need you immidiate help. " +
-            " The plan was to be at " + session.userData.locationType +
-            " that is located in " + session.userData.locationDetails +
-            " at arround " + session.userData.StartVerifyUTCtime +
-            " to meet someone that they " + session.userData.pastFamiliarity;                        
+                        session.userData.connectionMessage =
+                            "Hi " + session.userData.friendName +
+                            " I think that " + session.userData.Name + " might need you immidiate help. " +
+                            " He asked me to be availble bacause " + session.userData.DateType + ". " + 
+                            " The plan was to be at " + session.userData.locationType +
+                            " and he asked me to be availble bacause " + session.userData.DateType +
+                            " that is located in " + session.userData.locationDetails +
+                            " at arround " + session.userData.StartVerifyUTCtime +
+                            " to meet someone that they " + session.userData.pastFamiliarity;                        
 
-        session.userData.userMessage =
-            "Got it! you plan to be at " + session.userData.locationType +
-            " that is located in " + session.userData.locationDetails +
-            " at arround " + session.userData.StartVerifyUTCtime +
-            " to meet someone that you defined as " + session.userData.pastFamiliarity;
+                        session.userData.userMessage =
+                            "Got it! you plan to be at " + session.userData.locationType +
+                            " and you asked me to be availble bacause: " + session.userData.DateType + ". " + 
+                            " The location is " + session.userData.locationDetails +
+                            " and it should take place at arround " + session.userData.StartVerifyUTCtime +
+                            " to meet someone that you defined as " + session.userData.pastFamiliarity;
+
+                        session.userData.userReMessage =
+                            "Your plan was to be at " + session.userData.locationType +
+                            " and you asked me to be availble bacause: " + session.userData.DateType +
+                            " that is located in " + session.userData.locationDetails +
+                            " at arround " + session.userData.StartVerifyUTCtime +
+                            " to meet someone that you defined as " + session.userData.pastFamiliarity + ".";     
 
         session.send(session.userData.userMessage);
-
-         session.userData.userReMessage =
-            "Your plan was to be at " + session.userData.locationType +
-            " that is located in " + session.userData.locationDetails +
-            " at arround " + session.userData.StartVerifyUTCtime +
-            " to meet someone that you defined as " + session.userData.pastFamiliarity;       
+     
 
         var LogTimeStamp = moment().format(DateFormat);
 
         var newRecord = {
               'CreatedTime': LogTimeStamp,
+              'DateType': session.userData.DateType,
               'locationType': session.userData.locationType,
               'locationDetails': session.userData.locationDetails,
               'pastFamiliarity': session.userData.pastFamiliarity,
