@@ -1090,7 +1090,7 @@ bot.dialog('myEntitiesDialog',
 
                                         session.send( i+1 + ". " + result[i].StartVerifyUTCtime);
 
-                                        session.send( result[i].userReMessage);
+                                        session.send(result[i].userReMessage);
 
                                         if (result.length == i) {
 
@@ -1144,20 +1144,16 @@ bot.dialog('myEntitiesDialog',
               session.endConversation();
         } 
 
-
-
-
-        session.send("Next version... promise :-)"); 
   
   }).triggerAction({ 
     onFindAction: function (context, callback) {
         // Recognize users utterance
         switch (context.message.text.toLowerCase()) {
-            case '/mywatcher':
+            case '/mywatchers':
                 // You can trigger the action with callback(null, 1.0) but you're also
                 // allowed to return additional properties which will be passed along to
                 // the triggered dialog.
-                callback(null, 1.0, { topic: 'mywatcher' });
+                callback(null, 1.0, { topic: 'mywatchers' });
                 break;
             default:
                 callback(null, 0.0);
