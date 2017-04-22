@@ -501,6 +501,12 @@ bot.dialog('/', [
                             " at arround " + session.userData.StartVerifyUTCtime +
                             " to meet someone that you defined as " + session.userData.pastFamiliarity;
 
+                        session.userData.userReMessage =
+                            "Your plan was to be at " + session.userData.locationType +
+                            " that is located in " + session.userData.locationDetails +
+                            " at arround " + session.userData.StartVerifyUTCtime +
+                            " to meet someone that you defined as " + session.userData.pastFamiliarity + ".";                            
+
                         session.send(session.userData.userMessage);
 
                         var LogTimeStamp = moment().format(DateFormat);
@@ -519,6 +525,7 @@ bot.dialog('/', [
                             'userid': session.message.user.id,
                             'address': session.message.address,
                             'userMessage': session.userData.userMessage,
+                            'userReMessage': session.userData.userReMessage,
                             'connectionMessage': session.userData.connectionMessage,
                             'EntityStatus': 'pending'
                         };
@@ -583,6 +590,12 @@ bot.dialog('/', [
 
         session.send(session.userData.userMessage);
 
+         session.userData.userReMessage =
+            "Your plan was to be at " + session.userData.locationType +
+            " that is located in " + session.userData.locationDetails +
+            " at arround " + session.userData.StartVerifyUTCtime +
+            " to meet someone that you defined as " + session.userData.pastFamiliarity;       
+
         var LogTimeStamp = moment().format(DateFormat);
 
         var newRecord = {
@@ -601,6 +614,7 @@ bot.dialog('/', [
               'userid': session.message.user.id,
               'address': session.message.address,
               'userMessage': session.userData.userMessage,
+              'userReMessage': session.userData.userReMessage,
               'connectionMessage': session.userData.connectionMessage,
               'EntityStatus': 'pending'
         };
