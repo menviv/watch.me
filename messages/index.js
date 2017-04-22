@@ -101,9 +101,11 @@ schedule.scheduleJob(rule, function(){
 
                                             var OwnerName = result[i].OwnerName; 
 
+                                            var ownerHomeAddress = result[i].ownerHomeAddress; 
+
                                             var ExtractedDatePhoneNumber = result[i].ExtractedDatePhoneNumber; 
 
-                                            bot.beginDialog(Address, '/sendOwnerNotification', { EntityId: EntityId, userid: userid, OwnerName: OwnerName, ExtractedDatePhoneNumber: ExtractedDatePhoneNumber, type:'new' });
+                                            bot.beginDialog(Address, '/sendOwnerNotification', { EntityId: EntityId, userid: userid, OwnerName: OwnerName, ExtractedDatePhoneNumber: ExtractedDatePhoneNumber, ownerHomeAddress: ownerHomeAddress, type:'new' });
 
                                         }
 
@@ -300,7 +302,7 @@ bot.dialog('/', [
 
         } else {
 
-            session.userData.locationDetails = "Home Address";
+            session.userData.locationDetails = session.userData.ownerHomeAddress;
 
         }
 
@@ -956,6 +958,8 @@ bot.dialog('/login', [
                                     session.userData.authanticated = 'true';
 
                                     session.userData.Name = result[0].userName;
+
+                                    session.userData.ownerHomeAddress = result[0].ownerHomeAddress;
 
                                     session.sendTyping();
 
