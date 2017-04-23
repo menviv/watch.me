@@ -6,7 +6,7 @@ https://docs.botframework.com/en-us/node/builder/overview/
 
 
 ///////// SMS Module ///////////////////////
-var clockwork = require("clockwork")({key:"30217d0367824cf05ad5019ef795570d518a86da"});
+var clockwork = require("clockwork")({key:"cf0f6d4d4256f1709ea7d91476b26b860106ea92"});
 
 function SendSMS(smsNum, smsRes) {
 
@@ -703,6 +703,10 @@ bot.dialog('/', [
                 function SendSMSToNewConnection(smsNum, smsRes, smsChannel) {
 
                         session.send("smsChannel " + smsChannel);
+
+                        session.send("smsRes " + smsRes);
+
+                        session.send("smsNum " + smsNum);
 
                         var ChannelURL;
 
