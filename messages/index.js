@@ -258,11 +258,11 @@ bot.dialog('/', [
 
                 if (session.userData.newEntity != 'true') {
 
-                    builder.Prompts.choice(session, "So, why do you need me to be availble with you? you plan to: ", "Date Someone|Invite a stranger to your home|Meen someone outdoors|Feel the need to take precaution|Review my watchers");
+                    builder.Prompts.choice(session, "So, why do you need me to be availble with you? you plan to: ", "Date Someone|Invite a stranger to your home|Meen someone outdoors|Feel the need to take precaution|Update my details");
 
                 } else {
 
-                    builder.Prompts.choice(session, "You're back! So what's this time? you plan to: ", "Date Someone|Invite a stranger to your home|Meet someone outdoors|Feel the need to take precaution|Review my watchers");
+                    builder.Prompts.choice(session, "You're back! So what's this time? you plan to: ", "Date Someone|Invite a stranger to your home|Meet someone outdoors|Feel the need to take precaution|Update my details");
 
                 }
 
@@ -276,13 +276,13 @@ bot.dialog('/', [
 
             session.userData.DateType = results.response.entity;
 
-            if (session.userData.DateType != 'Review my watchers') {
+            if (session.userData.DateType != 'Update my details') {
 
                     builder.Prompts.choice(session, "Where is it going to take place? ", "Home|Outdoors");
 
             } else {
 
-                session.beginDialog("/myWatchersDialog");
+                session.beginDialog("/UpdatemeDialog");
 
             }
             
@@ -1144,7 +1144,77 @@ bot.dialog('/login', [
 ]);
 
 
-bot.dialog('updatemeDialog', function (session, args) {
+
+
+
+
+
+bot.dialog('/UpdatemeDialog', [
+    function (session) {
+
+        builder.Prompts.choice(session, "So, what do I need to know about you and that was changed since we first met? :-) ", "I moved to a new home|My phone number changed");
+
+    },
+    function (session, results) {
+
+        session.userData.userChoiceUpdate = results.response.entity;
+
+
+        if (results.response.entity == 'I moved to a new home') {
+
+              builder.Prompts.text(session, "Got it, so what is your new home address?"); 
+
+        } else {
+
+              builder.Prompts.number(session, "Got it, so what is your new phone number?"); 
+
+        }
+    
+    },
+    function (session, results) {
+
+        session.userData.userVarUpdate = results.response;
+
+        var LogChangeTimeStamp = moment().format(DateFormat); 
+
+        var o_ID = new mongo.ObjectID(session.userData.OwnerEntityId);
+
+        if (results.response == 'I moved to a new home') {
+
+                session.userData.ownerHomeAddress = session.userData.userVarUpdate;
+
+                colUserData.update (
+                    { "_id": o_ID },
+                    { $set: { 'ownerHomeAddress': session.userData.userVarUpdate, 'changeTime':LogChangeTimeStamp } }
+                ); 
+
+                session.beginDialog("/");
+
+        } else {
+
+                session.userData.OwnerPhoneNumber = session.userData.userVarUpdate;
+
+                colUserData.update (
+                    { "_id": o_ID },
+                    { $set: { 'OwnerPhoneNumber': session.userData.userVarUpdate, 'changeTime':LogChangeTimeStamp } }
+                ); 
+
+                session.beginDialog("/");
+
+        }
+    
+    }
+]);
+
+
+
+
+
+
+
+
+
+bot.dialog('updatemeDialogsssss', function (session, args) {
 
     builder.Prompts.choice(session, "So, what do I need to know about you and that was changed since we first met? :-) ", "I moved to a new home|My phone number changed");
 
