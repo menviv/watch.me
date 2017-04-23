@@ -966,7 +966,7 @@ bot.dialog('/login', [
 
         session.sendTyping();
 
-        builder.Prompts.number(session, "Hi there, before I can watch your back, please tell me your phone number:"); 
+        builder.Prompts.number(session, "Hi there :-), before I can do some watching for you or your friend, I have to know your phone number:"); 
 
 
     },
