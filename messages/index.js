@@ -8,21 +8,9 @@ https://docs.botframework.com/en-us/node/builder/overview/
 ///////// SMS Module ///////////////////////
 var clockwork = require("clockwork")({key:"30217d0367824cf05ad5019ef795570d518a86da"});
 
-function SendSMS(smsNum, smsRes, smsChannel) {
+function SendSMS(smsNum, smsRes) {
 
-        var ChannelURL;
-
-        if (smsChannel == 'SKYPE') {
-
-            ChannelURL = 'https://join.skype.com/bot/7dde3d7a-b313-4144-89d1-73014ce56540';
-
-        } else {
-            
-           ChannelURL = 'https://telegram.me/watch_me_bot'; 
-
-        }
-
-        clockwork.sendSms({ To: smsNum, Content: "Hey, " + smsRes + " might need your help. Click here to get helpful information to reach out and assist them. Please use the following URL for further information: " + ChannelURL}, function(error, resp) {
+        clockwork.sendSms({ To: smsNum, Content: "Hey, " + smsRes + " might need your help. Click here to get helpful information to reach out and assist them."}, function(error, resp) {
             if (error) {
                 console.log("Something went wrong", error);
             } else {
@@ -706,7 +694,36 @@ bot.dialog('/', [
 
                 colConnections.insert(newConnectionRecord, function(err, result){});  
 
-                SendSMS(smsNumasStr, session.userData.friendName, session.userData.ChannelType);          
+                SendSMSToNewConnection(smsNumasStr, session.userData.friendName, session.userData.ChannelType);  
+
+
+                function SendSMSToNewConnection(smsNum, smsRes, smsChannel) {
+
+                        session.send("smsChannel " + smsChannel);
+
+                        var ChannelURL;
+
+                        if (smsChannel == 'SKYPE') {
+
+                            ChannelURL = 'https://join.skype.com/bot/7dde3d7a-b313-4144-89d1-73014ce56540';
+
+                        } else {
+                            
+                        ChannelURL = 'https://telegram.me/watch_me_bot'; 
+
+                        }
+
+                        clockwork.sendSms({ To: smsNum, Content: "Hey, " + smsRes + " might need your help. Click here to get helpful information to reach out and assist them. Please use the following URL for further information: " + ChannelURL}, function(error, resp) {
+                            if (error) {
+                                console.log("Something went wrong", error);
+                            } else {
+                                console.log("Message sent",resp.responses[0].id);
+                            }
+                        });
+                }
+
+
+
 
 
         session.endDialog();
