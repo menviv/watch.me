@@ -258,7 +258,7 @@ bot.dialog('/', [
 
                 if (session.userData.newEntity != 'true') {
 
-                    builder.Prompts.choice(session, "So, why do you need me to be availble with you? you plan to: ", "Date Someone|Invite a stranger to your home|Meen someone outdoors|Feel the need to take precaution");
+                    builder.Prompts.choice(session, "So, why do you need me to be availble with you? you plan to: ", "Date Someone|Invite a stranger to your home|Meen someone outdoors|Feel the need to take precaution|Review my watchers");
 
                 } else {
 
@@ -276,7 +276,16 @@ bot.dialog('/', [
 
             session.userData.DateType = results.response.entity;
 
-            builder.Prompts.choice(session, "Where is it going to take place? ", "Home|Outdoors");
+            if (session.userData.DateType != 'Review my watchers') {
+
+                    builder.Prompts.choice(session, "Where is it going to take place? ", "Home|Outdoors");
+
+            } else {
+
+                session.beginDialog("/myEntitiesDialog");
+
+            }
+            
      
         } 
         
