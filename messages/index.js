@@ -686,7 +686,7 @@ bot.dialog('/', [
 
         colEntities.insert(newRecord, function(err, result){}); 
 
-                 var smsNumasStr = '972' + session.userData.SendSMS;
+                 var smsNumasStr = '+972' + session.userData.SendSMS;
 
                  var newConnectionRecord = {
                     'CreatedTime': LogTimeStamp,
