@@ -681,11 +681,13 @@ bot.dialog('/', [
 
         colEntities.insert(newRecord, function(err, result){}); 
 
-            
+                 var smsNumasStr = '972' + session.userData.SendSMS;
+
                  var newConnectionRecord = {
                     'CreatedTime': LogTimeStamp,
                     'userid': session.message.user.id,
-                    'friendPhone': smsNumasStr,
+                    'friendPhone': session.userData.SendSMS,
+                    'smsPhone': smsNumasStr,
                     'friendName': session.userData.friendName,
                     'channel': session.userData.ChannelType,
                     'address': session.message.address,
@@ -694,6 +696,7 @@ bot.dialog('/', [
 
                 colConnections.insert(newConnectionRecord, function(err, result){});  
 
+                
                 SendSMSToNewConnection(smsNumasStr, session.userData.friendName, session.userData.ChannelType);  
 
 
