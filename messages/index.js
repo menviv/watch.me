@@ -182,7 +182,7 @@ schedule.scheduleJob(rule, function(){
 
             function sendOwnerNotification(userid, Address, EntityId) {
 
-                var cursor = colConnections.find({ 'userid': userid });
+                var cursor = colConnections.find({ 'userid': userid, 'recordStatus': 'confirmed' });
                             
                 var result = [];
                 cursor.each(function(err, doc) {
@@ -424,7 +424,7 @@ bot.dialog('/', [
 
         function checkForPastConnections() {
 
-                        var cursor = colConnections.find({ 'userid': session.message.user.id });
+                        var cursor = colConnections.find({ 'userid': session.message.user.id, 'recordStatus': 'confirmed' });
                         
                         var result = [];
                         cursor.each(function(err, doc) {
@@ -1004,11 +1004,56 @@ bot.dialog('/login', [
             
                                 } else {
 
-                                    session.userData.authanticated = 'false';
 
-                                    session.sendTyping();
+                                        function ConnectionEvaluate() {
 
-                                    builder.Prompts.text(session, "I guess this is the first time we meet, so nice to meet you, I am WatchMe, and you?"); 
+                                                        var friendPhoneStr = '972' + session.userData.OwnerPhoneNumber;
+
+                                                        var cursor = colConnections.find({ 'friendPhone': friendPhoneStr, 'recordStatus': 'active' });
+                                                        
+                                                        var result = [];
+                                                        cursor.each(function(err, doc) {
+                                                            if(err)
+                                                                throw err;
+                                                            if (doc === null) {
+                                                                // doc is null when the last document has been processed
+
+
+                                                                if (result.length>0) {
+
+                                                                    session.userData.authanticated = 'false';
+
+                                                                    session.userData.connectionConfirm = 'true';
+
+                                                                    session.sendTyping();
+
+                                                                    session.userData.ConnectionEntityId = result[0]._id;
+
+                                                                    session.userData.friendName = result[0].friendName;
+
+                                                                    builder.Prompts.choice(session, "This is the first time we meet, so nice to meet you! I am WatchMe, and I know you because one of my friends asked me to notify if they will ever need your help. Your name is: " + result[0].friendName + ", am I correct?", "Yes|No"); 
+
+
+                                                                } else {
+
+                                                                    session.userData.authanticated = 'false';
+
+                                                                    session.userData.connectionConfirm = 'false';
+
+                                                                    session.sendTyping();
+
+                                                                    builder.Prompts.text(session, "This is the first time we meet, so nice to meet you! I am WatchMe, and you?"); 
+
+                                                                }
+
+
+                                                                return;
+                                                            }
+                                                            // do something with each doc, like push Email into a results array
+                                                            result.push(doc);
+                                                        }); 
+
+                                        }
 
                                 }
 
@@ -1020,16 +1065,51 @@ bot.dialog('/login', [
                         }); 
 
 
-        }
+        }        
 
-
-  
     },
     function (session, results) {
 
-        session.userData.Name = results.response;
+        if (session.userData.connectionConfirm == 'true') {
 
-        builder.Prompts.text(session, "Nice to meet you " + session.userData.Name + ", and what is your home address?"); 
+            var ConnectionConfirm = results.response.entity;
+
+            var o_ID = new mongo.ObjectID(session.userData.ConnectionEntityId);
+
+            var LogChangeTimeStamp = moment().format(DateFormat); 
+
+            if (ConnectionConfirm == 'Yes') {
+
+                colConnections.update (
+                    { "_id": o_ID },
+                    { $set: { 'recordStatus': 'confirmed', 'changeTime':LogChangeTimeStamp } }
+                );                
+
+                session.userData.Name = session.userData.friendName;
+
+                builder.Prompts.text(session, "Great :-) And what is your home address?"); 
+
+            } else {
+
+                colConnections.update (
+                    { "_id": o_ID },
+                    { $set: { 'recordStatus': 'inActive', 'changeTime':LogChangeTimeStamp } }
+                );                 
+                
+                session.send("OK " + session.userData.friendName + ", I will update my notes. Let's start again..");
+
+                session.beginDialog("/");
+
+            }
+
+        } else {
+
+            session.userData.Name = results.response;
+
+            builder.Prompts.text(session, "Nice to meet you " + session.userData.Name + ", and what is your home address?"); 
+
+        }
+
 
     },
     function (session, results) {
