@@ -262,7 +262,7 @@ bot.dialog('/', [
 
                 } else {
 
-                    builder.Prompts.choice(session, "You're back! So what's this time? you plan to: ", "Date Someone|Invite a stranger to your home|Meet someone outdoors|Feel the need to take precaution|Update my details");
+                    builder.Prompts.choice(session, "So what's this time? you plan to: ", "Date Someone|Invite a stranger to your home|Meet someone outdoors|Feel the need to take precaution|Update my details");
 
                 }
 
@@ -710,19 +710,19 @@ bot.dialog('/', [
 
                         } else {
                             
-                        ChannelURL = 'https://telegram.me/watch_me_bot'; 
+                            ChannelURL = 'https://telegram.me/watch_me_bot'; 
 
                         }
 
                         clockwork.sendSms({ To: smsNum, Content: "Hey, " + smsRes + " might need your help. Click here to get helpful information to reach out and assist them. Please use the following URL for further information: " + ChannelURL}, function(error, resp) {
                             if (error) {
-                                console.log("Something went wrong", error);
+                                csession.send("Something went wrong" + error);
                             } else {
-                                console.log("Message sent",resp.responses[0].id);
+                                session.send("Message sent"+resp.responses[0].id);
                             }
                         });
 
-                        session.send("I notified " + session.userData.friendName);
+                        session.send("No worries, I notified " + session.userData.friendName);
 
                 }
 
