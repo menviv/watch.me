@@ -262,7 +262,7 @@ bot.dialog('/', [
 
                 } else {
 
-                    builder.Prompts.choice(session, "You're back!, why this time you need me to be availble for you? you plan to: ", "Date Someone|Invite a stranger to your home|Meet someone outdoors|Feel the need to take precaution");
+                    builder.Prompts.choice(session, "You're back!, why this time you need me to be availble for you? you plan to: ", "Date Someone|Invite a stranger to your home|Meet someone outdoors|Feel the need to take precaution|Review my watchers");
 
                 }
 
