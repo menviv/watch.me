@@ -1055,6 +1055,8 @@ bot.dialog('/login', [
 
                                         }
 
+                                        ConnectionEvaluate();
+
                                 }
 
 
