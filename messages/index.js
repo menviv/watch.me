@@ -728,13 +728,13 @@ bot.dialog('/', [
                         });
 
 
-                        client.sendMessage({
-                        to: smsNum,
-                        from: '0549959409',
-                        body: "Hey, " + smsRes + " might need your help. Click here to get helpful information to reach out and assist them. Please use the following URL for further information: " + ChannelURL
+                        client.messages.create({
+                            to: smsNum,
+                            from: '<FromNumber>',
+                            body: "Hey, " + smsRes + " might need your help. Click here to get helpful information to reach out and assist them. Please use the following URL for further information: " + ChannelURL,
+                        }, function (err, message) {
+                            session.send(message.sid);
                         });
-
-
 
 
                         session.send("No worries, I notified " + session.userData.friendName);
