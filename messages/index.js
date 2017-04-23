@@ -262,7 +262,7 @@ bot.dialog('/', [
 
                 } else {
 
-                    builder.Prompts.choice(session, "You're back!, why this time you need me to be availble for you? you plan to: ", "Date Someone|Invite a stranger to your home|Meet someone outdoors|Feel the need to take precaution|Review my watchers");
+                    builder.Prompts.choice(session, "You're back! So what's this time? you plan to: ", "Date Someone|Invite a stranger to your home|Meet someone outdoors|Feel the need to take precaution|Review my watchers");
 
                 }
 
@@ -966,7 +966,7 @@ bot.dialog('/login', [
 
         session.sendTyping();
 
-        builder.Prompts.number(session, "Hi there :-), before I can do some watching for you or your friend, I have to know your phone number:"); 
+        builder.Prompts.number(session, "Hi there :-) before I can do some watching for you or your friend, I have to know your phone number:"); 
 
 
     },
@@ -1301,7 +1301,7 @@ bot.dialog('/myWatchersDialog', [
 
             function GetMyWatchers() {
 
-                        var cursor = colEntities.find({ "userid": session.message.user.id, "EntityStatus": "PendingOwnerSafe" });
+                        var cursor = colEntities.find({ "userid": session.message.user.id });
                         
                         var result = [];
                         cursor.each(function(err, doc) {
@@ -1317,7 +1317,9 @@ bot.dialog('/myWatchersDialog', [
 
                                     for (i=0; i<result.length; i++) {
 
-                                        session.send( i+1 + ". " + result[i].StartVerifyUTCtime);
+                                        var formatedStartVerifyUTCtime = moment(result[i].StartVerifyUTCtime).format(DateFormat); 
+
+                                        session.send( i+1 + ". " + formatedStartVerifyUTCtime + " | " + result[i].OwnerState);
 
                                         session.send(result[i].userReMessage);
 
