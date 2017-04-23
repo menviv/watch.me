@@ -1323,7 +1323,7 @@ bot.dialog('/myWatchersDialog', [
 
                                         session.send(result[i].userReMessage);
 
-                                        if (result.length == i) {
+                                        if (result.length == i+1) {
 
                                             builder.Prompts.choice(session, "Do you need my watching services again??", "Yes|NO"); 
 
