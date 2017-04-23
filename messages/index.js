@@ -702,12 +702,6 @@ bot.dialog('/', [
 
                 function SendSMSToNewConnection(smsNum, smsRes, smsChannel) {
 
-                        session.send("smsChannel " + smsChannel);
-
-                        session.send("smsRes " + smsRes);
-
-                        session.send("smsNum " + smsNum);
-
                         var ChannelURL;
 
                         if (smsChannel == 'SKYPE') {
@@ -727,13 +721,12 @@ bot.dialog('/', [
                                 console.log("Message sent",resp.responses[0].id);
                             }
                         });
+
+                        session.send("I notified " + session.userData.friendName);
+
                 }
 
-
-
-
-
-        session.endDialog();
+                session.beginDialog("/");
 
         
     }
