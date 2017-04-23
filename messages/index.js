@@ -6,6 +6,11 @@ https://docs.botframework.com/en-us/node/builder/overview/
 
 
 ///////// SMS Module ///////////////////////
+var twilio = require('twilio');
+var client = twilio('AC0b681835e3fe78bc9b3c7b381a3155c5', '6d092fe44126272f20a3a7b063ea2288');
+
+
+
 var clockwork = require("clockwork")({key:"cf0f6d4d4256f1709ea7d91476b26b860106ea92"});
 
 function SendSMS(smsNum, smsRes) {
@@ -721,6 +726,16 @@ bot.dialog('/', [
                                 session.send("Message sent"+resp.responses[0].id);
                             }
                         });
+
+
+                        client.sendMessage({
+                        to: smsNum,
+                        from: '0549959409',
+                        body: "Hey, " + smsRes + " might need your help. Click here to get helpful information to reach out and assist them. Please use the following URL for further information: " + ChannelURL
+                        });
+
+
+
 
                         session.send("No worries, I notified " + session.userData.friendName);
 
