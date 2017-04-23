@@ -8,9 +8,21 @@ https://docs.botframework.com/en-us/node/builder/overview/
 ///////// SMS Module ///////////////////////
 var clockwork = require("clockwork")({key:"30217d0367824cf05ad5019ef795570d518a86da"});
 
-function SendSMS(smsNum, smsRes) {
+function SendSMS(smsNum, smsRes, smsChannel) {
 
-        clockwork.sendSms({ To: smsNum, Content: "Hey, " + smsRes + " might need your help. Click here to get helpful information to reach out and assist them."}, function(error, resp) {
+        var ChannelURL;
+
+        if (smsChannel == 'SKYPE') {
+
+            ChannelURL = 'https://join.skype.com/bot/7dde3d7a-b313-4144-89d1-73014ce56540';
+
+        } else {
+            
+           ChannelURL = 'https://telegram.me/watch_me_bot'; 
+
+        }
+
+        clockwork.sendSms({ To: smsNum, Content: "Hey, " + smsRes + " might need your help. Click here to get helpful information to reach out and assist them. Please use the following URL for further information: " + ChannelURL}, function(error, resp) {
             if (error) {
                 console.log("Something went wrong", error);
             } else {
@@ -448,7 +460,7 @@ bot.dialog('/', [
 
                                     }
 
-                                    builder.Prompts.choice(session, "Would you like to notify them or create new?", "Create New|Notify them");
+                                    builder.Prompts.choice(session, "Would you like to notify them or create new?", "Create New later on|Notify them");
 
             
                                 } else {
@@ -457,7 +469,7 @@ bot.dialog('/', [
 
                                     session.sendTyping();
 
-                                    builder.Prompts.choice(session, "Ok, now I need to know who to notify if I'll be worried for your safety", "Create New Nonnection|Just inform the police");
+                                    builder.Prompts.choice(session, "Usually before contacting the police I prefer to notify pre-defined tructed connections, but you still don't have any. I will ask you to define those later on...", "OK|Just inform the police");
 
                                 }
 
@@ -478,7 +490,10 @@ bot.dialog('/', [
 
         if (session.userData.pastConnections == 'true') {
 
-                        var cursor = colConnections.find({ 'userid': session.message.user.id });
+                if (results.response.entity == 'Notify them') {
+
+
+                       var cursor = colConnections.find({ 'userid': session.message.user.id });
                         
                         var result = [];
                         cursor.each(function(err, doc) {
@@ -570,13 +585,31 @@ bot.dialog('/', [
                         session.beginDialog("/SafetyInstructions"); 
 
 
+                } else {
+
+                    session.sendTyping();
+
+                    builder.Prompts.choice(session, "How do you want them to connect with me?", "Telegram|SKYPE");
+
+                }
+
+
         } else {
 
             session.sendTyping();
 
-            builder.Prompts.text(session, "What's your connection's name: "); 
+            builder.Prompts.choice(session, "How do you want them to connect with me?", "Telegram|SKYPE");
         
         }
+        
+    },
+    function (session, results) {
+
+            session.userData.ChannelType = results.response.entity;
+
+            session.sendTyping();
+
+            builder.Prompts.text(session, "Let's define your trusted connections! What's your connection's name: "); 
         
     },
     function (session, results) {
@@ -666,11 +699,14 @@ bot.dialog('/', [
                     'userid': session.message.user.id,
                     'friendPhone': smsNumasStr,
                     'friendName': session.userData.friendName,
+                    'channel': session.userData.ChannelType,
                     'address': session.message.address,
                     'recordStatus': 'active'
                 };
 
-                colConnections.insert(newConnectionRecord, function(err, result){});            
+                colConnections.insert(newConnectionRecord, function(err, result){});  
+
+                SendSMS(smsNumasStr, session.userData.friendName, session.userData.ChannelType);          
 
 
         session.endDialog();
