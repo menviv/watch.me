@@ -282,7 +282,7 @@ bot.dialog('/', [
 
             } else {
 
-                session.beginDialog("/myEntitiesDialog");
+                session.beginDialog("/myWatchersDialog");
 
             }
             
@@ -1294,6 +1294,87 @@ bot.dialog('myEntitiesDialog',
 });
 
 
+
+
+bot.dialog('/myWatchersDialog', [
+    function (session) {
+
+            function GetMyWatchers() {
+
+                        var cursor = colEntities.find({ "userid": session.message.user.id, "EntityStatus": "PendingOwnerSafe" });
+                        
+                        var result = [];
+                        cursor.each(function(err, doc) {
+                            if(err)
+                                throw err;
+                            if (doc === null) {
+                                // doc is null when the last document has been processed
+
+
+                                if (result.length>0) {
+                                    
+                                    session.sendTyping();
+
+                                    for (i=0; i<result.length; i++) {
+
+                                        session.send( i+1 + ". " + result[i].StartVerifyUTCtime);
+
+                                        session.send(result[i].userReMessage);
+
+                                        if (result.length == i) {
+
+                                            builder.Prompts.choice(session, "Do you need my watching services again??", "Yes|NO"); 
+
+                                        }
+
+                                    }
+
+                                } else {
+
+                                    session.sendTyping();
+
+                                    session.send("I don't know if it's good or bad, but I don't know of any active watching task associated with you :/" );
+
+                                    builder.Prompts.choice(session, "Did I miss anything?", "I think so|None"); 
+
+                                }
+
+
+                                return;
+                            }
+                            // do something with each doc, like push Email into a results array
+                            result.push(doc);
+                        }); 
+
+
+            }
+
+            GetMyWatchers();
+
+    },
+    function (session, results) {
+
+            session.userData.OwnerPhoneNumber = results.response.entity;
+
+
+            if (results.response.entity == 'Yes') {
+
+                session.beginDialog("/");
+
+            } else if (results.response.entity == 'I think so') {
+
+                session.send("Ok, let me get back to you after checking again." );
+
+            } else if (results.response.entity == 'None' || results.response.entity == 'NO') {
+                
+                session.send("See you soon and keep safe!" );
+
+                session.endConversation();
+            } 
+
+    
+    }
+]);
 
 
 
