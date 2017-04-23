@@ -1031,7 +1031,7 @@ bot.dialog('/login', [
 
                                                                     session.userData.friendName = result[0].friendName;
 
-                                                                    builder.Prompts.choice(session, "This is the first time we meet, so nice to meet you! I am WatchMe, and I know you because one of my friends asked me to notify if they will ever need your help. Your name is: " + result[0].friendName + ", am I correct?", "Yes|No"); 
+                                                                    builder.Prompts.choice(session, "This is the first time we meet, so nice to meet you! I am WatchMe, but I know you because one of my friends asked me to notify you if they will ever need your help. Your name is: " + result[0].friendName + ", Am I correct?", "Yes|No"); 
 
 
                                                                 } else {
