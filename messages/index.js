@@ -306,6 +306,8 @@ bot.dialog('/', [
 
             } else {
 
+                session.send("Your home address is: " + session.userData.ownerHomeAddress + ". If I'm wrong please /updateme with the right address.");
+
                 builder.Prompts.text(session, "If you think that I should know anything that can help me to keep your safety, please type in as many details as possible or just 'NO': "); 
 
             }
@@ -996,9 +998,11 @@ bot.dialog('/login', [
 
                                     session.userData.ownerHomeAddress = result[0].ownerHomeAddress;
 
+                                    session.userData.OwnerEntityId = result[0]._id;
+
                                     session.sendTyping();
 
-                                    session.send("OK " + session.userData.Name + ", now I remember you..");
+                                    session.send("Good to have you back " + session.userData.Name + "! I hope I was able to help you in the past..");
 
                                     session.beginDialog("/");
             
@@ -1140,14 +1144,81 @@ bot.dialog('/login', [
 ]);
 
 
+bot.dialog('updatemeDialog', function (session, args) {
 
+    builder.Prompts.choice(session, "So, what do I need to know about you and that was changed since we first met? :-) ", "I moved to a new home|My phone number changed");
+
+
+},
+function (session, results) {
+
+        session.userData.userChoiceUpdate = results.response.entity;
+
+
+        if (results.response.entity == 'I moved to a new home') {
+
+              builder.Prompts.text(session, "Got it, so what is your new home address?"); 
+
+        } else {
+
+              builder.Prompts.number(session, "Got it, so what is your new phone number?"); 
+
+        }
+
+  },
+  function (session, results) {
+
+        session.userData.userVarUpdate = results.response;
+
+        var LogChangeTimeStamp = moment().format(DateFormat); 
+
+        var o_ID = new mongo.ObjectID(session.userData.OwnerEntityId);
+
+        if (results.response == 'I moved to a new home') {
+
+                session.userData.ownerHomeAddress = session.userData.userVarUpdate;
+
+                colUserData.update (
+                    { "_id": o_ID },
+                    { $set: { 'ownerHomeAddress': session.userData.userVarUpdate, 'changeTime':LogChangeTimeStamp } }
+                ); 
+
+                session.beginDialog("/");
+
+        } else {
+
+                session.userData.OwnerPhoneNumber = session.userData.userVarUpdate;
+
+                colUserData.update (
+                    { "_id": o_ID },
+                    { $set: { 'OwnerPhoneNumber': session.userData.userVarUpdate, 'changeTime':LogChangeTimeStamp } }
+                ); 
+
+                session.beginDialog("/");
+
+        }
+
+  }).triggerAction({ 
+    onFindAction: function (context, callback) {
+        // Recognize users utterance
+        switch (context.message.text.toLowerCase()) {
+            case '/updateme':
+                // You can trigger the action with callback(null, 1.0) but you're also
+                // allowed to return additional properties which will be passed along to
+                // the triggered dialog.
+                callback(null, 1.0, { topic: 'updateme' });
+                break;
+            default:
+                callback(null, 0.0);
+                break;
+        }
+    } 
+});
 
 
 
 
 bot.dialog('restartDialog', function (session, args) {
-
-    //SendSMS("972549959409");
 
     session.userData.authanticated = 'false';
 
