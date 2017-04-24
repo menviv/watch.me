@@ -739,8 +739,8 @@ bot.dialog('/', [
                         client.messages.create({ 
                             to: smsNum, 
                             from: "+13344313598", 
-                            body: "Hey, " + smsRes + " might need your help. Click here to get helpful information to reach out and assist them. Please use the following URL for further information: ",
-                            mediaUrl: ChannelURL,  
+                            body: "Hey, " + smsRes + " might need your help. Click here to get helpful information to reach out and assist them. Please use the following URL for further information: " + ChannelURL,
+                            mediaUrl: "https://c1.staticflickr.com/3/2899/14341091933_1e92e62d12_b.jpg",  
                         }, function(err, message) { 
                             if(err){
                             session.send(err);
