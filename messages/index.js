@@ -23,13 +23,7 @@ var clockwork = require("clockwork")({key:"cf0f6d4d4256f1709ea7d91476b26b860106e
 
 function SendSMS(smsNum, smsRes) {
 
-        clockwork.sendSms({ To: smsNum, Content: "Hey, " + smsRes + " might need your help. Click here to get helpful information to reach out and assist them."}, function(error, resp) {
-            if (error) {
-                console.log("Something went wrong", error);
-            } else {
-                console.log("Message sent",resp.responses[0].id);
-            }
-        });
+
 }
 
 ///////// Time Module ///////////////////////
@@ -630,7 +624,7 @@ bot.dialog('/', [
 
             var smsNumasStr = '972' + session.userData.SendSMS;
 
-            SendSMS(smsNumasStr, session.userData.Name);
+            session.send("No worries, I notified " + session.userData.friendName);
 
         }
 
@@ -726,14 +720,6 @@ bot.dialog('/', [
                             ChannelURL = 'https://telegram.me/watch_me_bot'; 
 
                         }
-
-                        clockwork.sendSms({ To: smsNum, Content: "Hey, " + smsRes + " might need your help. Click here to get helpful information to reach out and assist them. Please use the following URL for further information: " + ChannelURL}, function(error, resp) {
-                            if (error) {
-                                csession.send("Something went wrong" + error);
-                            } else {
-                                session.send("Message sent"+resp.responses[0].id);
-                            }
-                        });
                         
 
                         client.messages.create({ 
@@ -748,9 +734,7 @@ bot.dialog('/', [
                             session.send(message);
                             };
                         });                       
-
-
-                        session.send("No worries, I notified " + session.userData.friendName);
+    
 
                 }
 
@@ -1061,7 +1045,7 @@ bot.dialog('/login', [
         
         function SignIn() {
 
-                        var cursor = colUserData.find({ 'userid': session.message.user.id });
+                        var cursor = colUserData.find({ 'ownerPhoneNumber': session.userData.OwnerPhoneNumber });
                         
                         var result = [];
                         cursor.each(function(err, doc) {
@@ -1371,14 +1355,51 @@ function (session, results) {
 
 
 
-bot.dialog('smsDialog', function (session, args) {
+bot.dialog('inviteBySmsDialog', function (session, args) {
 
-        session.send('smsDialog');
+        ession.sendTyping();
+
+        builder.Prompts.choice(session, "Good call! Together we can keep us all safe. So how do you want them to connect with me?", "Telegram|SKYPE");
+
+},
+function (session, results) {
+
+        session.userData.userInviteChannel = results.response.entity;
+
+        builder.Prompts.number(session, "Got it, what is their phone number?"); 
+
+  },
+function (session, results) {
+
+        session.userData.userInvitePhone = results.response;
+
+        builder.Prompts.text(session, "And their full name?"); 
+
+
+  },
+function (session, results) {
+
+        session.userData.userInviteFullName = results.response;
+
+        var smsNumasStr = '+972' + session.userData.userInvitePhone;
+
+
+        var ChannelURL;
+
+        if (session.userData.userInviteChannel == 'SKYPE') {
+
+            ChannelURL = 'https://join.skype.com/bot/7dde3d7a-b313-4144-89d1-73014ce56540';
+
+        } else {
+                            
+            ChannelURL = 'https://telegram.me/watch_me_bot'; 
+
+        }        
 
         client.messages.create({ 
-            to: "+972549959409", 
+            to: smsNumasStr, 
             from: "+13344313598", 
-            body: "This is the ship that made the Kessel Run in fourteen parsecs?", 
+            body: "Hi " + session.userData.userInviteFullName + "! " + session.userData.Name + " thought that you might want to use my watching habbits :-) Let's meet " + ChannelURL, 
             mediaUrl: "https://c1.staticflickr.com/3/2899/14341091933_1e92e62d12_b.jpg",  
         }, function(err, message) { 
             //session.send(message.sid); 
@@ -1387,17 +1408,19 @@ bot.dialog('smsDialog', function (session, args) {
             } else {
             session.send(message);
             };
-        });
+        });        
 
-}).triggerAction({ 
+
+
+  }).triggerAction({ 
     onFindAction: function (context, callback) {
         // Recognize users utterance
         switch (context.message.text.toLowerCase()) {
-            case '/sms':
+            case '/invite':
                 // You can trigger the action with callback(null, 1.0) but you're also
                 // allowed to return additional properties which will be passed along to
                 // the triggered dialog.
-                callback(null, 1.0, { topic: 'sms' });
+                callback(null, 1.0, { topic: 'invite' });
                 break;
             default:
                 callback(null, 0.0);
