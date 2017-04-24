@@ -1375,7 +1375,8 @@ bot.dialog('smsDialog', function (session, args) {
             body: "This is the ship that made the Kessel Run in fourteen parsecs?", 
             mediaUrl: "https://c1.staticflickr.com/3/2899/14341091933_1e92e62d12_b.jpg",  
         }, function(err, message) { 
-            session.send(message.sid); 
+            //session.send(message.sid); 
+            session.send(message);
         });
 
 
