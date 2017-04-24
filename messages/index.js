@@ -6,8 +6,16 @@ https://docs.botframework.com/en-us/node/builder/overview/
 
 
 ///////// SMS Module ///////////////////////
-var twilio = require('twilio');
-var client = twilio('AC0b681835e3fe78bc9b3c7b381a3155c5', '6d092fe44126272f20a3a7b063ea2288');
+
+
+// Twilio Credentials 
+var accountSid = 'AC0b681835e3fe78bc9b3c7b381a3155c5'; 
+var authToken = '6d092fe44126272f20a3a7b063ea2288'; 
+
+//require the Twilio module and create a REST client 
+var client = require('twilio')(accountSid, authToken); 
+ 
+
 
 
 
@@ -726,6 +734,7 @@ bot.dialog('/', [
                                 session.send("Message sent"+resp.responses[0].id);
                             }
                         });
+                        
 
 
                         client.sendMessage({
@@ -1345,6 +1354,40 @@ function (session, results) {
                 // allowed to return additional properties which will be passed along to
                 // the triggered dialog.
                 callback(null, 1.0, { topic: 'updateme' });
+                break;
+            default:
+                callback(null, 0.0);
+                break;
+        }
+    } 
+});
+
+
+
+
+
+
+bot.dialog('smsDialog', function (session, args) {
+
+        client.messages.create({ 
+            to: "+972549959409", 
+            from: "+15017250604", 
+            body: "This is the ship that made the Kessel Run in fourteen parsecs?", 
+            mediaUrl: "https://c1.staticflickr.com/3/2899/14341091933_1e92e62d12_b.jpg",  
+        }, function(err, message) { 
+            session.send(message.sid); 
+        });
+
+
+}).triggerAction({ 
+    onFindAction: function (context, callback) {
+        // Recognize users utterance
+        switch (context.message.text.toLowerCase()) {
+            case '/sms':
+                // You can trigger the action with callback(null, 1.0) but you're also
+                // allowed to return additional properties which will be passed along to
+                // the triggered dialog.
+                callback(null, 1.0, { topic: 'sms' });
                 break;
             default:
                 callback(null, 0.0);
