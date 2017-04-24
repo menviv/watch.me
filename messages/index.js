@@ -1368,7 +1368,7 @@ function (session, results) {
 
 
 bot.dialog('smsDialog', function (session, args) {
-
+/*
         client.messages.create({ 
             to: "+972549959409", 
             from: "+15017250604", 
@@ -1378,6 +1378,14 @@ bot.dialog('smsDialog', function (session, args) {
             //session.send(message.sid); 
             session.send(message);
         });
+*/
+        client.sendMessage({
+            messagingServiceSid: 'MG9752274e9e519418a7406176694466fa',
+            to: '+972549959409',
+            body: 'Phantom Menace was clearly the best of the prequel trilogy.'
+        }, function(err, message) {
+            session.send(message);
+        });        
 
 
 }).triggerAction({ 
