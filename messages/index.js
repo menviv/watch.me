@@ -1374,7 +1374,7 @@ session.send('smsDialog');
 
         client.messages.create({ 
             to: "+972549959409", 
-            from: "+15017250604", 
+            from: "+13344313598", 
             body: "This is the ship that made the Kessel Run in fourteen parsecs?", 
             mediaUrl: "https://c1.staticflickr.com/3/2899/14341091933_1e92e62d12_b.jpg",  
         }, function(err, message) { 
@@ -1386,8 +1386,17 @@ session.send('smsDialog');
             };
         });
 
-
-      
+/*
+client.sendMessage({
+to: "+972549959409",
+from: from,
+body: "Hello",
+},function(err, message){
+if(err)
+console.log(err);
+console.log(message.sid);
+});
+ */     
 
 
 }).triggerAction({ 
