@@ -1384,7 +1384,14 @@ bot.dialog('smsDialog', function (session, args) {
             to: '+972549959409',
             body: 'Phantom Menace was clearly the best of the prequel trilogy.'
         }, function(err, message) {
+
+            if(err){
+            session.send(err);
+            } else {
             session.send(message);
+            };
+
+            
         });        
 
 
