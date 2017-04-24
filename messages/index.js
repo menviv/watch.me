@@ -1357,7 +1357,7 @@ function (session, results) {
 
 bot.dialog('inviteBySmsDialog', function (session, args) {
 
-        ession.sendTyping();
+        session.sendTyping();
 
         builder.Prompts.choice(session, "Good call! Together we can keep us all safe. So how do you want them to connect with me?", "Telegram|SKYPE");
 
@@ -1366,12 +1366,16 @@ function (session, results) {
 
         session.userData.userInviteChannel = results.response.entity;
 
+        session.sendTyping();
+
         builder.Prompts.number(session, "Got it, what is their phone number?"); 
 
   },
 function (session, results) {
 
         session.userData.userInvitePhone = results.response;
+
+        session.sendTyping();
 
         builder.Prompts.text(session, "And their full name?"); 
 
@@ -1408,7 +1412,11 @@ function (session, results) {
             } else {
             session.send(message);
             };
-        });        
+        });  
+
+        session.send("I've done my part :-) ");
+
+        session.beginDialog("/");      
 
 
 
