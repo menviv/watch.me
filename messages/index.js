@@ -1368,6 +1368,9 @@ function (session, results) {
 
 
 bot.dialog('smsDialog', function (session, args) {
+
+session.send('smsDialog');
+
 /*
         client.messages.create({ 
             to: "+972549959409", 
@@ -1379,6 +1382,9 @@ bot.dialog('smsDialog', function (session, args) {
             session.send(message);
         });
 */
+
+
+
         client.sendMessage({
             messagingServiceSid: 'MG9752274e9e519418a7406176694466fa',
             to: '+972549959409',
