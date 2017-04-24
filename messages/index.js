@@ -736,14 +736,18 @@ bot.dialog('/', [
                         });
                         
 
-
-                        client.sendMessage({
-                            to: smsNum,
-                            from: '+13344313598',
+                        client.messages.create({ 
+                            to: smsNum, 
+                            from: "+13344313598", 
                             body: "Hey, " + smsRes + " might need your help. Click here to get helpful information to reach out and assist them. Please use the following URL for further information: " + ChannelURL,
-                        }, function (err, message) {
+                            //mediaUrl: "https://c1.staticflickr.com/3/2899/14341091933_1e92e62d12_b.jpg",  
+                        }, function(err, message) { 
+                            if(err){
+                            session.send(err);
+                            } else {
                             session.send(message);
-                        });
+                            };
+                        });                       
 
 
                         session.send("No worries, I notified " + session.userData.friendName);
@@ -1369,8 +1373,7 @@ function (session, results) {
 
 bot.dialog('smsDialog', function (session, args) {
 
-session.send('smsDialog');
-
+        session.send('smsDialog');
 
         client.messages.create({ 
             to: "+972549959409", 
@@ -1385,19 +1388,6 @@ session.send('smsDialog');
             session.send(message);
             };
         });
-
-/*
-client.sendMessage({
-to: "+972549959409",
-from: from,
-body: "Hello",
-},function(err, message){
-if(err)
-console.log(err);
-console.log(message.sid);
-});
- */     
-
 
 }).triggerAction({ 
     onFindAction: function (context, callback) {
